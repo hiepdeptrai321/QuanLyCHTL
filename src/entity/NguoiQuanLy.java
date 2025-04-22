@@ -2,36 +2,32 @@ package entity;
 
 import java.sql.Date;
 
-public class NhanVien {
+public class NguoiQuanLy {
     private String ma;
-    private Date ngayVaoLam;
-    private double luong;
-    private Date caLam;
+    private int capBac;
+    private double phuCap;
     private String hoTen;
     private String sdt;
     private String email;
     private Date namSinh;
     private String diaChi;
-    private String maNQL;
     private String maTK;
     
-	public NhanVien(String ma, Date ngayVaoLam, double luong, Date caLam, String hoTen, String sdt, String email,
-			Date namSinh, String diaChi, String maNQL, String maTK) {
+	public NguoiQuanLy(String ma, int capBac, double phuCap, String hoTen, String sdt, String email, Date namSinh,
+			String diaChi, String maTK) {
 		super();
 		this.ma = ma;
-		this.ngayVaoLam = ngayVaoLam;
-		this.luong = luong;
-		this.caLam = caLam;
+		this.capBac = capBac;
+		this.phuCap = phuCap;
 		this.hoTen = hoTen;
 		this.sdt = sdt;
 		this.email = email;
 		this.namSinh = namSinh;
 		this.diaChi = diaChi;
-		this.maNQL = maNQL;
 		this.maTK = maTK;
 	}
 
-	public NhanVien() {
+	public NguoiQuanLy() {
 		super();
 	}
 
@@ -39,16 +35,12 @@ public class NhanVien {
 		return ma;
 	}
 
-	public Date getNgayVaoLam() {
-		return ngayVaoLam;
+	public int getCapBac() {
+		return capBac;
 	}
 
-	public double getLuong() {
-		return luong;
-	}
-
-	public Date getCaLam() {
-		return caLam;
+	public double getPhuCap() {
+		return phuCap;
 	}
 
 	public String getHoTen() {
@@ -71,10 +63,6 @@ public class NhanVien {
 		return diaChi;
 	}
 
-	public String getMaNQL() {
-		return maNQL;
-	}
-
 	public String getMaTK() {
 		return maTK;
 	}
@@ -83,16 +71,12 @@ public class NhanVien {
 		this.ma = ma;
 	}
 
-	public void setNgayVaoLam(Date ngayVaoLam) {
-		this.ngayVaoLam = ngayVaoLam;
+	public void setCapBac(int capBac) {
+		this.capBac = capBac;
 	}
 
-	public void setLuong(double luong) {
-		this.luong = luong;
-	}
-
-	public void setCaLam(Date caLam) {
-		this.caLam = caLam;
+	public void setPhuCap(double phuCap) {
+		this.phuCap = phuCap;
 	}
 
 	public void setHoTen(String hoTen) {
@@ -115,10 +99,6 @@ public class NhanVien {
 		this.diaChi = diaChi;
 	}
 
-	public void setMaNQL(String maNQL) {
-		this.maNQL = maNQL;
-	}
-
 	public void setMaTK(String maTK) {
 		this.maTK = maTK;
 	}
@@ -126,10 +106,9 @@ public class NhanVien {
 	@Override
 	public String toString() {
 		return String.format(
-				"NhanVien [ma=%s, ngayVaoLam=%s, luong=%s, caLam=%s, hoTen=%s, sdt=%s, email=%s, namSinh=%s, diaChi=%s, maNQL=%s, maTK=%s]",
-				ma, ngayVaoLam, luong, caLam, hoTen, sdt, email, namSinh, diaChi, maNQL, maTK);
+				"NguoiQuanLy [ma=%s, capBac=%s, phuCap=%s, hoTen=%s, sdt=%s, email=%s, namSinh=%s, diaChi=%s, maTK=%s]",
+				ma, capBac, phuCap, hoTen, sdt, email, namSinh, diaChi, maTK);
 	}
     
     
 }
-
