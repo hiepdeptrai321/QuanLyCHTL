@@ -4,14 +4,17 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import connectDB.ConnectDB;
 import entity.NhanVien;
 
 public class NhanVien_DAO {
     private Connection conn;
+	private ArrayList<NhanVien> dsnv;
 
-    public NhanVien_DAO(Connection conn) {
-        this.conn = conn;
-    }
+	public NhanVien_DAO() {
+		dsnv = new ArrayList<NhanVien>();
+		
+	}
 
     public boolean insert(NhanVien nv) throws SQLException {
         String sql = "INSERT INTO NhanVien (ma, ngayVaoLam, luong, caLam, hoTen, SDT, email, namSinh, diaChi, maNQL, maTK) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -82,6 +85,8 @@ public class NhanVien_DAO {
     }
 
     public List<NhanVien> getAll() throws SQLException {
+    	ConnectDB.getInstance();
+        conn = ConnectDB.getConnection();
         List<NhanVien> list = new ArrayList<>();
         String sql = "SELECT * FROM NhanVien";
         try (PreparedStatement ps = conn.prepareStatement(sql);

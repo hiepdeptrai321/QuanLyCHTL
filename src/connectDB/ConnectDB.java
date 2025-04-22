@@ -12,8 +12,8 @@ public class ConnectDB {
 		return instance;
 	}
 
-	public void Connect() {
-		String url ="jdbc:sqlsever://localhost:1433;databasename=QLNV";
+	public void connect() {
+		String url ="jdbc:sqlserver://localhost:1433;databasename=QuanLyCHTL";
 		String user ="sa";
 		String pass ="sapassword";
 		try {
@@ -24,7 +24,7 @@ public class ConnectDB {
 		}
 	}
 	
-	public static void disconect() {
+	public static void disconnect() {
 		if(con!=null) {
 			try {
 				con.close();
