@@ -38,7 +38,7 @@ import connectDB.ConnectDB; // Assuming connectDB package
 import dao.KhuyenMai_DAO; // Assuming dao package
 import entity.KhuyenMai; // Assuming entity package
 
-public class KhuyenMai_GUI extends JFrame implements ActionListener {
+public class KhuyenMai_GUI extends JPanel implements ActionListener {
 
     private JPanel contentPane;
     private JTextField txtTimKiem;
@@ -64,13 +64,11 @@ public class KhuyenMai_GUI extends JFrame implements ActionListener {
         ConnectDB.getInstance().connect();
 		khuyenMaiDAO = new KhuyenMai_DAO(ConnectDB.getConnection());
 
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(1100, 700);
-        setLocationRelativeTo(null);
         contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
         contentPane.setLayout(new BorderLayout(0, 0));
-        setContentPane(contentPane);
+       add(contentPane);
 
         JSplitPane splitPane = new JSplitPane();
         splitPane.setResizeWeight(0.45);
@@ -242,6 +240,21 @@ public class KhuyenMai_GUI extends JFrame implements ActionListener {
 
         loadDataTable();
         lamMoiFormChiTiet(); // Set initial state (form ready for add)
+        
+        try {
+            // Use Nimbus for a modern look, or System Look and Feel
+           for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+               if ("Nimbus".equals(info.getName())) {
+                   UIManager.setLookAndFeel(info.getClassName());
+                   break;
+               }
+           }
+           // If Nimbus not available, fallback to System L&F
+           // UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+       } catch (Exception e) {
+            // If L&F setting fails, it might default to Metal, which is okay
+           e.printStackTrace();
+       }
 
         setVisible(true);
     }
@@ -506,31 +519,17 @@ public class KhuyenMai_GUI extends JFrame implements ActionListener {
         }
     }
 
-    public static void main(String[] args) {
-        // Set Look and Feel (optional but recommended)
-        try {
-             // Use Nimbus for a modern look, or System Look and Feel
-            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-            // If Nimbus not available, fallback to System L&F
-            // UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
-             // If L&F setting fails, it might default to Metal, which is okay
-            e.printStackTrace();
-        }
-
-        EventQueue.invokeLater(() -> {
-            try {
-                KhuyenMai_GUI frame = new KhuyenMai_GUI();
-                frame.setVisible(true);
-            } catch (Exception e) {
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(null, "Không thể khởi chạy ứng dụng: " + e.getMessage(), "Lỗi nghiêm trọng", JOptionPane.ERROR_MESSAGE);
-            }
-        });
-    }
+//    public static void main(String[] args) {
+//        // Set Look and Feel (optional but recommended)
+//
+//        EventQueue.invokeLater(() -> {
+//            try {
+//                KhuyenMai_GUI frame = new KhuyenMai_GUI();
+//                frame.setVisible(true);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//                JOptionPane.showMessageDialog(null, "Không thể khởi chạy ứng dụng: " + e.getMessage(), "Lỗi nghiêm trọng", JOptionPane.ERROR_MESSAGE);
+//            }
+//        });
+//    }
 }

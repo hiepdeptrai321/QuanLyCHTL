@@ -2,134 +2,63 @@ package entity;
 
 import java.sql.Date;
 
-public class NhanVien {
-    private String ma;
+public class NhanVien extends Nguoi{
     private Date ngayVaoLam;
     private double luong;
     private Date caLam;
-    private String hoTen;
-    private String sdt;
-    private String email;
-    private Date namSinh;
-    private String diaChi;
     private String maNQL;
     private String maTK;
-    
-	public NhanVien(String ma, Date ngayVaoLam, double luong, Date caLam, String hoTen, String sdt, String email,
-			Date namSinh, String diaChi, String maNQL, String maTK) {
-		super();
-		this.ma = ma;
+	public NhanVien(String ma, String hoTen, String sdt, String email, Date namSinh, String diaChi, Date ngayVaoLam,
+			double luong, Date caLam, String maNQL, String maTK) {
+		super(ma, hoTen, sdt, email, namSinh, diaChi);
 		this.ngayVaoLam = ngayVaoLam;
 		this.luong = luong;
 		this.caLam = caLam;
-		this.hoTen = hoTen;
-		this.sdt = sdt;
-		this.email = email;
-		this.namSinh = namSinh;
-		this.diaChi = diaChi;
 		this.maNQL = maNQL;
 		this.maTK = maTK;
 	}
-
 	public NhanVien() {
 		super();
 	}
-
-	public String getMa() {
-		return ma;
-	}
-
 	public Date getNgayVaoLam() {
 		return ngayVaoLam;
 	}
-
 	public double getLuong() {
 		return luong;
 	}
-
 	public Date getCaLam() {
 		return caLam;
 	}
-
-	public String getHoTen() {
-		return hoTen;
-	}
-
-	public String getSdt() {
-		return sdt;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public Date getNamSinh() {
-		return namSinh;
-	}
-
-	public String getDiaChi() {
-		return diaChi;
-	}
-
 	public String getMaNQL() {
 		return maNQL;
 	}
-
 	public String getMaTK() {
 		return maTK;
 	}
-
-	public void setMa(String ma) {
-		this.ma = ma;
-	}
-
 	public void setNgayVaoLam(Date ngayVaoLam) {
 		this.ngayVaoLam = ngayVaoLam;
 	}
-
 	public void setLuong(double luong) {
 		this.luong = luong;
 	}
-
 	public void setCaLam(Date caLam) {
 		this.caLam = caLam;
 	}
-
-	public void setHoTen(String hoTen) {
-		this.hoTen = hoTen;
-	}
-
-	public void setSdt(String sdt) {
-		this.sdt = sdt;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public void setNamSinh(Date namSinh) {
-		this.namSinh = namSinh;
-	}
-
-	public void setDiaChi(String diaChi) {
-		this.diaChi = diaChi;
-	}
-
 	public void setMaNQL(String maNQL) {
 		this.maNQL = maNQL;
 	}
-
 	public void setMaTK(String maTK) {
 		this.maTK = maTK;
 	}
-
 	@Override
 	public String toString() {
 		return String.format(
-				"NhanVien [ma=%s, ngayVaoLam=%s, luong=%s, caLam=%s, hoTen=%s, sdt=%s, email=%s, namSinh=%s, diaChi=%s, maNQL=%s, maTK=%s]",
-				ma, ngayVaoLam, luong, caLam, hoTen, sdt, email, namSinh, diaChi, maNQL, maTK);
+				"NhanVien [ngayVaoLam=%s, luong=%s, caLam=%s, maNQL=%s, maTK=%s, getMa()=%s, getHoTen()=%s, getSdt()=%s, getEmail()=%s, getNamSinh()=%s, getDiaChi()=%s, toString()=%s, getClass()=%s, hashCode()=%s]",
+				ngayVaoLam, luong, caLam, maNQL, maTK, getMa(), getHoTen(), getSdt(), getEmail(), getNamSinh(),
+				getDiaChi(), super.toString(), getClass(), hashCode());
 	}
     
+	
     
 }
 
