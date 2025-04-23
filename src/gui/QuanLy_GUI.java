@@ -191,8 +191,8 @@ public class QuanLy_GUI extends JPanel implements ActionListener,MouseListener{
 //	quản lý khuyến mãi
 	private JPanel quanLyKM() {
 		JPanel pnl = new JPanel();
-		pnl.setBackground(Color.BLUE);
-		
+		pnl.setLayout(new BorderLayout());
+		pnl.add(new KhuyenMai_GUI(), BorderLayout.CENTER);
 		return pnl;
 	}
 //	quản lý nhân viên

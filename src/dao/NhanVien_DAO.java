@@ -9,11 +9,9 @@ import entity.NhanVien;
 
 public class NhanVien_DAO {
     private Connection conn;
-	private ArrayList<NhanVien> dsnv;
 
-	public NhanVien_DAO() {
-		dsnv = new ArrayList<NhanVien>();
-		
+	public NhanVien_DAO(Connection conn) {
+		this.conn = conn;
 	}
 
     public boolean insert(NhanVien nv) throws SQLException {
