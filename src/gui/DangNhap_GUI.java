@@ -1,5 +1,7 @@
 package gui;
 
-public class DangNhap_GUI {
+import javax.swing.JFrame;
+
+public class DangNhap_GUI extends JFrame{
 
 }
