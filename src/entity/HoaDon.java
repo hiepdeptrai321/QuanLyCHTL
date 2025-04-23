@@ -11,11 +11,11 @@ public class HoaDon {
     private double tienNhan;
     private double tienThoi;
     private int tongSoLuongSP;
-    private String maKH;
-    private String maNV;
+    private KhachHang kh;
+    private NhanVien nv;
     
 	public HoaDon(String maHD, Date ngayLap, int quay, double tongTien, double thanhTien, double tienNhan,
-			double tienThoi, int tongSoLuongSP, String maKH, String maNV) {
+			double tienThoi, int tongSoLuongSP, KhachHang kh, NhanVien nv) {
 		super();
 		this.maHD = maHD;
 		this.ngayLap = ngayLap;
@@ -25,8 +25,8 @@ public class HoaDon {
 		this.tienNhan = tienNhan;
 		this.tienThoi = tienThoi;
 		this.tongSoLuongSP = tongSoLuongSP;
-		this.maKH = maKH;
-		this.maNV = maNV;
+		this.kh = kh;
+		this.nv = nv;
 	}
 
 	public HoaDon() {
@@ -65,12 +65,12 @@ public class HoaDon {
 		return tongSoLuongSP;
 	}
 
-	public String getMaKH() {
-		return maKH;
+	public KhachHang getKh() {
+		return kh;
 	}
 
-	public String getMaNV() {
-		return maNV;
+	public NhanVien getNv() {
+		return nv;
 	}
 
 	public void setMaHD(String maHD) {
@@ -105,19 +105,19 @@ public class HoaDon {
 		this.tongSoLuongSP = tongSoLuongSP;
 	}
 
-	public void setMaKH(String maKH) {
-		this.maKH = maKH;
+	public void setKh(KhachHang kh) {
+		this.kh = kh;
 	}
 
-	public void setMaNV(String maNV) {
-		this.maNV = maNV;
+	public void setNv(NhanVien nv) {
+		this.nv = nv;
 	}
 
 	@Override
 	public String toString() {
 		return String.format(
 				"HoaDon [maHD=%s, ngayLap=%s, quay=%s, tongTien=%s, thanhTien=%s, tienNhan=%s, tienThoi=%s, tongSoLuongSP=%s, maKH=%s, maNV=%s]",
-				maHD, ngayLap, quay, tongTien, thanhTien, tienNhan, tienThoi, tongSoLuongSP, maKH, maNV);
+				maHD, ngayLap, quay, tongTien, thanhTien, tienNhan, tienThoi, tongSoLuongSP, kh.getMa(), nv.getMa());
 	}
     
     
