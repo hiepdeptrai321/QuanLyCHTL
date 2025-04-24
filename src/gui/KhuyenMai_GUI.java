@@ -241,23 +241,7 @@ public class KhuyenMai_GUI extends JPanel implements ActionListener {
 
         loadDataTable();
         lamMoiFormChiTiet(); // Set initial state (form ready for add)
-        
-        try {
-            // Use Nimbus for a modern look, or System Look and Feel
-           for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-               if ("Nimbus".equals(info.getName())) {
-                   UIManager.setLookAndFeel(info.getClassName());
-                   break;
-               }
-           }
-           // If Nimbus not available, fallback to System L&F
-           // UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-       } catch (Exception e) {
-            // If L&F setting fails, it might default to Metal, which is okay
-           e.printStackTrace();
-       }
-
-        setVisible(true);
+      
     }
 
     private void loadDataTable() {
