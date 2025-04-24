@@ -4,9 +4,9 @@ public class TaiKhoan {
     private String maTK;
     private String tenDN;
     private String matKhau;
-    private int vaiTro;
+    private String vaiTro;
     
-	public TaiKhoan(String maTK, String tenDN, String matKhau, int vaiTro) {
+	public TaiKhoan(String maTK, String tenDN, String matKhau, String vaiTro) {
 		super();
 		this.maTK = maTK;
 		this.tenDN = tenDN;
@@ -27,7 +27,7 @@ public class TaiKhoan {
 	public String getMatKhau() {
 		return matKhau;
 	}
-	public int getVaiTro() {
+	public String getVaiTro() {
 		return vaiTro;
 	}
 	public void setMaTK(String maTK) {
@@ -39,7 +39,7 @@ public class TaiKhoan {
 	public void setMatKhau(String matKhau) {
 		this.matKhau = matKhau;
 	}
-	public void setVaiTro(int vaiTro) {
+	public void setVaiTro(String vaiTro) {
 		this.vaiTro = vaiTro;
 	}
 

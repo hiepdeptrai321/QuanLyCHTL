@@ -63,12 +63,14 @@ public class KhuyenMai_GUI extends JPanel implements ActionListener {
     public KhuyenMai_GUI() {
         ConnectDB.getInstance().connect();
 		khuyenMaiDAO = new KhuyenMai_DAO(ConnectDB.getConnection());
-
-        setSize(1100, 700);
+		setLayout(new BorderLayout());
+		
+        setSize(1300, 700);
         contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
         contentPane.setLayout(new BorderLayout(0, 0));
-       add(contentPane);
+        contentPane.setSize(1300, 700);
+        add(contentPane,BorderLayout.CENTER);
 
         JSplitPane splitPane = new JSplitPane();
         splitPane.setResizeWeight(0.45);

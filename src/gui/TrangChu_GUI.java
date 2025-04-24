@@ -17,9 +17,9 @@ public class TrangChu_GUI extends JFrame implements MouseListener,ActionListener
 	
 	public TrangChu_GUI() {
 		super("Cửa hàng tiện lợi");
-		setSize(1500,1000);
+		setSize(1400,800);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setLocation(500, 250);
+		setLocationRelativeTo(null);
 		JPanel pnlAll = new JPanel(new BorderLayout());
 		
 //		======================================================================================== Pannel North
@@ -105,6 +105,7 @@ public class TrangChu_GUI extends JFrame implements MouseListener,ActionListener
 		pnlAll.add(pnlN,BorderLayout.NORTH);
 		pnlAll.add(pnlW,BorderLayout.WEST);
 		pnlAll.add(pnlC, BorderLayout.CENTER);
+		pnlC.setBorder(BorderFactory.createEmptyBorder(20, 30, 0, 0));
 		
 //		thêm pannel vào jframe
 		add(pnlAll);

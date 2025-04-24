@@ -29,7 +29,7 @@ public class NhanVien_GUI extends JPanel implements ActionListener,MouseListener
 //		======================================================================================== Pannel North
 		setLayout(new BorderLayout());
 		JPanel pnlN = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		JLabel lblTitle = new JLabel("Nhân viên");
+		JLabel lblTitle = new JLabel("Chức năng nhân viên");
 		Font fTitle = new Font("TimesRoman",Font.BOLD,20);
 		lblTitle.setForeground(Color.decode("#FF3366"));
 		lblTitle.setFont(fTitle);
@@ -38,14 +38,11 @@ public class NhanVien_GUI extends JPanel implements ActionListener,MouseListener
 //		======================================================================================== Pannel West
 		Box pnlW = Box.createVerticalBox();
 		Dimension btnSize = new Dimension(200, 50);
-		pnlW.setOpaque(true);
-		pnlW.setBackground(Color.decode("#FF3366"));
 		
 //		button khách hàng
 		ImageIcon iconKH = new ImageIcon(getClass().getResource("/148899.png"));
 	    Image imgKH = iconKH.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
 		btnKH = new JButton("Khách hàng", new ImageIcon(imgKH));
-		btnKH.setBackground(Color.decode("#FF3366"));
 		btnKH.setBorderPainted(false);
 		btnKH.setContentAreaFilled(false);
 		btnKH.setFocusPainted(false);
@@ -59,7 +56,6 @@ public class NhanVien_GUI extends JPanel implements ActionListener,MouseListener
 	    ImageIcon iconSP = new ImageIcon(getClass().getResource("/127907.png"));
 	    Image imgSP = iconSP.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
 	    btnHD = new JButton("Hóa đơn", new ImageIcon(imgSP));
-	    btnHD.setBackground(Color.decode("#FF3366"));
 	    btnHD.setBorderPainted(false);
 	    btnHD.setContentAreaFilled(false);
 	    btnHD.setFocusPainted(false);
@@ -126,10 +122,10 @@ public class NhanVien_GUI extends JPanel implements ActionListener,MouseListener
 
 	    if (o == btnKH) {
 	    	btnKH.setOpaque(true);
-	    	btnKH.setBackground(Color.decode("#FF3366"));
+	    	btnKH.setBackground(null);
 	    } else if (o == btnHD) {
 	    	btnHD.setOpaque(true);
-	    	btnHD.setBackground(Color.decode("#FF3366"));
+	    	btnHD.setBackground(null);
 	    }
 	}
 //	======================================================================================== actionPerformed
