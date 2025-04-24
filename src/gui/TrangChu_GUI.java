@@ -164,8 +164,8 @@ public class TrangChu_GUI extends JFrame implements MouseListener,ActionListener
 	    btnHD.addActionListener(this);
 	    btnThoat.addActionListener(this);
 	    
-	    pnlW.add(btnKH);
 	    pnlW.add(btnHD);
+	    pnlW.add(btnKH);
 	    pnlW.add(btnNV);
 	    pnlW.add(btnSP);
 	    pnlW.add(btnKM);
@@ -180,9 +180,13 @@ public class TrangChu_GUI extends JFrame implements MouseListener,ActionListener
 	    pnlRight.setPreferredSize(new Dimension(300, 0));
 	    pnlRight.setBackground(Color.LIGHT_GRAY);
 	    pnlRight.setVisible(false);
-
+	    
+	    pnlC.add(new HoaDon_GUI());
 	    pnlC.add(pnlRight, BorderLayout.EAST);
-
+	    btnHD.setBackground(Color.decode("#FF6699"));
+	    btnHD.setOpaque(true);
+	    selectedButton = btnHD;
+	    
 	    
 //	    ======================================================================================== Các thành phần phụ   
 //		thêm các pannel vào pannel lớn
