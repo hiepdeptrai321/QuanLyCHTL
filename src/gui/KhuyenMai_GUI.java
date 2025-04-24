@@ -68,8 +68,8 @@ public class KhuyenMai_GUI extends JPanel implements ActionListener {
         contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
         contentPane.setLayout(new BorderLayout(0, 0));
-       add(contentPane);
-
+        add(contentPane);
+        
         JSplitPane splitPane = new JSplitPane();
         splitPane.setResizeWeight(0.45);
         splitPane.setEnabled(false);

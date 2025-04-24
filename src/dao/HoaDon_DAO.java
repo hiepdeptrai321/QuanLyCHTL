@@ -4,6 +4,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import entity.ChiTietHoaDon;
 import entity.HoaDon;
 import entity.KhachHang;
 import entity.KhuyenMai;
@@ -189,6 +190,132 @@ public class HoaDon_DAO {
         }
         return list;
     }
-    
+    public boolean insertWithDetails(HoaDon hoaDon, List<ChiTietHoaDon> chiTietList) throws SQLException {
+        // 1. Kiểm tra đầu vào cơ bản
+        if (hoaDon == null || chiTietList == null || chiTietList.isEmpty()) {
+            System.err.println("Hóa đơn hoặc danh sách chi tiết không hợp lệ.");
+            return false;
+        }
+
+        // 2. Định nghĩa câu lệnh SQL
+        // Câu lệnh SQL cho HoaDon (giống hoặc tương tự hàm insert đơn lẻ)
+        String sqlHoaDon = "INSERT INTO HoaDon (maHD, ngayLap, quay, tongTien, thanhTien, tienNhan, tienThoi, tongSoLuongSP, maKH, maNV) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        // Câu lệnh SQL cho ChiTietHoaDon - ***QUAN TRỌNG: Chỉnh sửa tên cột và thứ tự cho đúng với CSDL của bạn***
+        String sqlChiTiet = "INSERT INTO ChiTietHoaDon (maHD, maSP, soLuong, donGia) VALUES (?, ?, ?, ?)";
+
+        PreparedStatement psHoaDon = null;
+        PreparedStatement psChiTiet = null;
+        boolean success = false;
+
+        try {
+            // 3. Bắt đầu Transaction: Tắt auto-commit
+            conn.setAutoCommit(false);
+
+            // 4. Thêm Hóa Đơn (Header)
+            psHoaDon = conn.prepareStatement(sqlHoaDon);
+            psHoaDon.setString(1, hoaDon.getMaHD());
+            psHoaDon.setTimestamp(2, new Timestamp(hoaDon.getNgayLap().getTime())); // Lưu cả giờ phút giây
+            psHoaDon.setInt(3, hoaDon.getQuay());
+            psHoaDon.setDouble(4, hoaDon.getTongTien());    // Tổng tiền hàng gốc (trước KM)
+            psHoaDon.setDouble(5, hoaDon.getThanhTien());   // Thành tiền (sau KM)
+            psHoaDon.setDouble(6, hoaDon.getTienNhan());    // Tiền khách đưa
+            psHoaDon.setDouble(7, hoaDon.getTienThoi());    // Tiền thối
+            psHoaDon.setInt(8, hoaDon.getTongSoLuongSP()); // Tổng số lượng SP trong HĐ
+
+            // Xử lý khóa ngoại KhachHang (có thể null)
+            if (hoaDon.getKh() != null) {
+                psHoaDon.setString(9, hoaDon.getKh().getMa()); // Lấy mã KH
+            } else {
+                psHoaDon.setNull(9, Types.NVARCHAR); // Hoặc Types.VARCHAR tùy CSDL
+            }
+            // Xử lý khóa ngoại NhanVien (có thể null)
+            if (hoaDon.getNv() != null) {
+                 psHoaDon.setString(10, hoaDon.getNv().getMa()); // Lấy mã NV
+            } else {
+                 psHoaDon.setNull(10, Types.NVARCHAR); // Hoặc Types.VARCHAR
+            }
+
+            int hoaDonAffectedRows = psHoaDon.executeUpdate();
+            if (hoaDonAffectedRows == 0) {
+                // Nếu không thêm được Hóa đơn -> rollback và báo lỗi
+                conn.rollback(); // Hoàn tác transaction
+                System.err.println("Thêm Hóa Đơn thất bại, không có dòng nào bị ảnh hưởng.");
+                return false; // Hoặc ném Exception
+            }
+
+            // 5. Thêm Chi Tiết Hóa Đơn (Details) - Sử dụng Batch Update cho hiệu quả
+            psChiTiet = conn.prepareStatement(sqlChiTiet);
+            for (ChiTietHoaDon cthd : chiTietList) {
+                // *** Đảm bảo thứ tự tham số (?) khớp với câu lệnh sqlChiTiet ***
+                psChiTiet.setString(1, hoaDon.getMaHD()); // Khóa ngoại liên kết đến Hóa đơn vừa tạo
+                psChiTiet.setString(2, cthd.getMaSP()); // Khóa ngoại đến SanPham
+                psChiTiet.setInt(3, cthd.getSoLuong());
+                psChiTiet.setDouble(4, cthd.getDonGia()); // Đơn giá tại thời điểm bán
+
+                psChiTiet.addBatch(); // Thêm câu lệnh vào batch
+            }
+
+            // Thực thi tất cả các lệnh trong batch
+            int[] chiTietAffectedRows = psChiTiet.executeBatch();
+
+            // Kiểm tra kết quả batch (tùy chọn, nhưng nên làm)
+            for (int result : chiTietAffectedRows) {
+                 if (result == PreparedStatement.EXECUTE_FAILED) {
+                     conn.rollback(); // Hoàn tác nếu có lỗi trong batch
+                     System.err.println("Thêm Chi Tiết Hóa Đơn thất bại trong batch.");
+                     return false; // Hoặc ném Exception
+                 }
+                 if (result == PreparedStatement.SUCCESS_NO_INFO) {
+                     // Có thể thành công nhưng driver không cung cấp số dòng ảnh hưởng
+                     // Thường vẫn ổn, nhưng cần lưu ý
+                 }
+            }
+
+
+            // 6. Nếu tất cả thành công -> Commit Transaction
+            conn.commit();
+            success = true;
+            System.out.println("Thêm hóa đơn và chi tiết thành công (Transaction committed).");
+
+        } catch (SQLException e) {
+            // 7. Nếu có lỗi ở bất kỳ đâu -> Rollback Transaction
+            System.err.println("Transaction bị lỗi, đang thực hiện rollback...");
+            if (conn != null) {
+                try {
+                    conn.rollback();
+                    System.err.println("Transaction đã được rollback.");
+                } catch (SQLException excep) {
+                    System.err.println("Rollback thất bại: " + excep.getMessage());
+                    // Ném lỗi nghiêm trọng hơn nếu rollback cũng thất bại
+                    throw new SQLException("Lỗi trong transaction VÀ rollback cũng thất bại.", excep);
+                }
+            }
+             // Ném lại lỗi gốc để lớp gọi có thể xử lý
+            throw e;
+
+        } finally {
+            // 8. Dọn dẹp tài nguyên và trả lại trạng thái auto-commit
+            if (psHoaDon != null) {
+                try {
+                    psHoaDon.close();
+                } catch (SQLException e) { /* Bỏ qua lỗi khi đóng */ }
+            }
+            if (psChiTiet != null) {
+                try {
+                    psChiTiet.close();
+                } catch (SQLException e) { /* Bỏ qua lỗi khi đóng */ }
+            }
+            if (conn != null) {
+                try {
+                    // Luôn trả lại trạng thái auto-commit=true cho connection
+                    conn.setAutoCommit(true);
+                } catch (SQLException e) {
+                    System.err.println("Không thể reset auto-commit: " + e.getMessage());
+                }
+            }
+        }
+
+        return success; // Trả về true nếu commit thành công
+    }
 }
 
