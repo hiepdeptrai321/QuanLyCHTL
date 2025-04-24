@@ -78,18 +78,13 @@ public class DangNhap_GUI extends JFrame implements ActionListener {
         add(pnlForm, BorderLayout.CENTER);
         
         try {
-            // Use Nimbus for a modern look, or System Look and Feel
            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
                if ("Nimbus".equals(info.getName())) {
                    UIManager.setLookAndFeel(info.getClassName());
-//                   UIManager.setFocusPainted(false);
                    break;
                }
            }
-           // If Nimbus not available, fallback to System L&F
-           // UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
        } catch (Exception e) {
-            // If L&F setting fails, it might default to Metal, which is okay
            e.printStackTrace();
        }
     }
@@ -101,11 +96,12 @@ public class DangNhap_GUI extends JFrame implements ActionListener {
     	String passTemp = new String();
     	if (user.isEmpty() || pass.isEmpty()) {
             lblError.setText("Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu!");
+            return;
         }
     	
     	try {
     		TaiKhoan tkTemp = tk.getByTK(txtUser.getText());
-    		passTemp =tkTemp.getMatKhau();
+    		passTemp = tkTemp.getMatKhau();
 		} catch (SQLException e2) {
 			// TODO: handle exception
 			e2.printStackTrace();
@@ -116,7 +112,9 @@ public class DangNhap_GUI extends JFrame implements ActionListener {
             lblError.setText("Tên đăng nhập hoặc mật khẩu không đúng!");
         } else {
             lblError.setText("");
-            new TrangChu_GUI();
+            TrangChu_GUI trangChu = new TrangChu_GUI();
+            
+            this.setVisible(false);
         }
     }
 
