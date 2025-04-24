@@ -14,20 +14,22 @@ public class KhachHang_DAO {
     }
 
     public boolean insert(KhachHang kh) throws SQLException {
-        String sql = "INSERT INTO KhachHang (ma, ngayDangKy, diemTichLuy, hangThanhVien, soLanMuaHang, hoTen, sdt, email, namSinh, maNV) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, kh.getMa());
-            ps.setDate(2, new java.sql.Date(kh.getNgayDangKy().getTime()));
-            ps.setInt(3, kh.getDiemTichLuy());
-            ps.setInt(4, kh.getHangThanhVien());
-            ps.setInt(5, kh.getSoLanMuaHang());
-            ps.setString(6, kh.getHoTen());
-            ps.setString(7, kh.getSdt());
-            ps.setString(8, kh.getEmail());
-            ps.setDate(9, new java.sql.Date(kh.getNamSinh().getTime()));
-            ps.setString(10, kh.getMaNV());
-            return ps.executeUpdate() > 0;
-        }
+        String sql = "INSERT INTO KhachHang (ma, ngayDangKy, diemTichLuy, hangThanhVien, soLanMuaHang, hoTen, sdt, email, namSinh, maNV) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.setString(1, kh.getMa());
+        stmt.setDate(2, kh.getNgayDangKy());
+        stmt.setInt(3, kh.getDiemTichLuy());
+        stmt.setInt(4, kh.getHangThanhVien());
+        stmt.setInt(5, kh.getSoLanMuaHang());
+        stmt.setString(6, kh.getHoTen());
+        stmt.setString(7, kh.getSdt());
+        stmt.setString(8, kh.getEmail());
+        stmt.setDate(9, kh.getNamSinh());
+        stmt.setString(10, kh.getMaNV());
+
+        int rows = stmt.executeUpdate();
+        return rows > 0;
     }
 
     public boolean update(KhachHang kh) throws SQLException {

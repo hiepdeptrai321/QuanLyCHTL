@@ -9,7 +9,7 @@ import entity.NhanVien;
 
 public class NhanVien_DAO {
     private Connection conn;
-	private ArrayList<NhanVien> dsnv;
+	private ArrayList<NhanVien>     dsnv;
 
 	public NhanVien_DAO() {
 		dsnv = new ArrayList<NhanVien>();

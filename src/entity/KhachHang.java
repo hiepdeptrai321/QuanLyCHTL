@@ -13,18 +13,18 @@ public class KhachHang {
     private String email;
     private Date namSinh;
     private String maNV;
-	public KhachHang(String ma, Date ngayDangKy, int diemTichLuy, int hangThanhVien, int soLanMuaHang, String hoTen,
-			String sdt, String email, Date namSinh, String maNV) {
+	public KhachHang(String ma, java.util.Date ngayDangKy, int diemTichLuy, int hangThanhVien, int soLanMuaHang, String hoTen,
+			String sdt, String email, java.util.Date namSinh, String maNV) {
 		super();
 		this.ma = ma;
-		this.ngayDangKy = ngayDangKy;
+		this.ngayDangKy = (Date) ngayDangKy;
 		this.diemTichLuy = diemTichLuy;
 		this.hangThanhVien = hangThanhVien;
 		this.soLanMuaHang = soLanMuaHang;
 		this.hoTen = hoTen;
 		this.sdt = sdt;
 		this.email = email;
-		this.namSinh = namSinh;
+		this.namSinh = (Date) namSinh;
 		this.maNV = maNV;
 	}
 	public KhachHang() {
