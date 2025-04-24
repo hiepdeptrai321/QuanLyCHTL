@@ -66,7 +66,7 @@ import entity.NhanVien;
 import entity.SanPham;
 
 
-public class HoaDon_GUI extends JFrame implements ActionListener {
+public class HoaDon_GUI extends JPanel implements ActionListener {
 
     private JPanel contentPane; 
     private JTabbedPane tabbedPane; 
@@ -97,7 +97,6 @@ public class HoaDon_GUI extends JFrame implements ActionListener {
 
     private JTextField txtMaKHSearch;
     private JButton btnTimKH;
-    private JButton btnThemKH; 
     private JCheckBox chkKhachLe;
     private JLabel lblTenKHDisplay;
     private JLabel lblMaKHDisplay; 
@@ -125,15 +124,13 @@ public class HoaDon_GUI extends JFrame implements ActionListener {
 		khachHangDAO = new KhachHang_DAO(ConnectDB.getConnection());
 		currentHoaDonList = new ArrayList<>();
 
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setTitle("Quản Lý Hóa Đơn");
         setSize(1200, 700);
-        setLocationRelativeTo(null);
-
+        
+        setLayout(new BorderLayout());
         contentPane = new JPanel();
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5)); // Giảm border chút
         contentPane.setLayout(new BorderLayout(0, 0)); // JFrame dùng BorderLayout
-        setContentPane(contentPane);
+        add(contentPane,BorderLayout.CENTER);
 
         // --- Tạo JTabbedPane ---
         tabbedPane = new JTabbedPane(JTabbedPane.TOP);

@@ -25,14 +25,14 @@ public class QuanLy_GUI extends JPanel implements ActionListener,MouseListener{
 	private JButton btnNV;
 	private JButton btnSP;
 	private JButton btnKM;
-	private JPanel pnlC;
+	private Box pnlC;
 
 	public QuanLy_GUI() {
 		super();
 //		======================================================================================== Pannel North
 		setLayout(new BorderLayout());
 		JPanel pnlN = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		JLabel lblTitle = new JLabel("Quản lý");
+		JLabel lblTitle = new JLabel("Chức năng quản lý");
 		Font fTitle = new Font("TimesRoman",Font.BOLD,20);
 		lblTitle.setForeground(Color.decode("#FF3366"));
 		lblTitle.setFont(fTitle);
@@ -41,14 +41,11 @@ public class QuanLy_GUI extends JPanel implements ActionListener,MouseListener{
 //		======================================================================================== Pannel West
 		Box pnlW = Box.createVerticalBox();
 		Dimension btnSize = new Dimension(200, 50);
-		pnlW.setOpaque(true);
-		pnlW.setBackground(Color.decode("#FF3366"));
 		
 //		button quản lý nhân viên
 		ImageIcon iconNV = new ImageIcon(getClass().getResource("/148960.png"));
 	    Image imgNV = iconNV.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
 		btnNV = new JButton("Quản lý nhân viên", new ImageIcon(imgNV));
-		btnNV.setBackground(Color.decode("#FF3366"));
 		btnNV.setBorderPainted(false);
 		btnNV.setContentAreaFilled(false);
 		btnNV.setFocusPainted(false);
@@ -62,7 +59,6 @@ public class QuanLy_GUI extends JPanel implements ActionListener,MouseListener{
 	    ImageIcon iconSP = new ImageIcon(getClass().getResource("/139413.png"));
 	    Image imgSP = iconSP.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
 		btnSP = new JButton("Quản lý sản phẩm", new ImageIcon(imgSP));
-		btnSP.setBackground(Color.decode("#FF3366"));
 		btnSP.setBorderPainted(false);
 		btnSP.setContentAreaFilled(false);
 		btnSP.setFocusPainted(false);
@@ -76,7 +72,6 @@ public class QuanLy_GUI extends JPanel implements ActionListener,MouseListener{
 	    ImageIcon iconKM = new ImageIcon(getClass().getResource("/160256.png"));
 	    Image imgKM = iconKM.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
 		btnKM = new JButton("Quản lý Khuyến mãi", new ImageIcon(imgKM));
-		btnKM.setBackground(Color.decode("#FF3366"));
 		btnKM.setBorderPainted(false);
 		btnKM.setContentAreaFilled(false);
 		btnKM.setFocusPainted(false);
@@ -98,14 +93,13 @@ public class QuanLy_GUI extends JPanel implements ActionListener,MouseListener{
 		btnKM.addMouseListener(this);
 		btnNV.addMouseListener(this);
 //		======================================================================================== pannel Center
-		pnlC = new JPanel(new BorderLayout());
+		pnlC = Box.createHorizontalBox();
 		
 //		thêm vào pannel chính
 		add(pnlN,BorderLayout.NORTH);
 		add(pnlW,BorderLayout.WEST);
 		add(pnlC,BorderLayout.CENTER);
-		
-		pnlC.add(quanLyNV());
+		pnlC.add(new KhuyenMai_GUI());
 	}
 //	======================================================================================== mouse listener
 	@Override
@@ -148,13 +142,13 @@ public class QuanLy_GUI extends JPanel implements ActionListener,MouseListener{
 
 	    if (o == btnNV) {
 	        btnNV.setOpaque(true);
-	        btnNV.setBackground(Color.decode("#FF3366"));
+	        btnNV.setBackground(null);
 	    } else if (o == btnSP) {
 	    	btnSP.setOpaque(true);
-	    	btnSP.setBackground(Color.decode("#FF3366"));
+	    	btnSP.setBackground(null);
 	    } else if(o == btnKM) {
 	    	btnKM.setOpaque(true);
-	    	btnKM.setBackground(Color.decode("#FF3366"));
+	    	btnKM.setBackground(null);
 	    }
 	}
 //	======================================================================================== actionPerformed
@@ -164,43 +158,19 @@ public class QuanLy_GUI extends JPanel implements ActionListener,MouseListener{
 		Object o = e.getSource();
 		if(o.equals(btnSP)) {
 			pnlC.removeAll();
-			pnlC.add(quanLySP());
+//			pnlC.add(quanLySP());
 			pnlC.revalidate();
-	        pnlC.repaint(); 
+			pnlC.repaint();
 		}else if(o.equals(btnKM)) {
 			pnlC.removeAll();
-			pnlC.add(quanLyKM());
+			pnlC.add(new KhuyenMai_GUI());
 			pnlC.revalidate();
-	        pnlC.repaint(); 
+			pnlC.repaint();
 		}else if(o.equals(btnNV)) {
 			pnlC.removeAll();
-			pnlC.add(quanLyNV());
+//			quanLyNV();
 			pnlC.revalidate();
-	        pnlC.repaint(); 
+			pnlC.repaint();
 		}
 	}
-	
-//	======================================================================================== Methods
-//	quản lý sản phẩm
-	private JPanel quanLySP() {
-		JPanel pnl = new JPanel();
-		pnl.setBackground(Color.PINK);
-		
-		return pnl;
-	}
-//	quản lý khuyến mãi
-	private JPanel quanLyKM() {
-		JPanel pnl = new JPanel();
-		pnl.setLayout(new BorderLayout());
-		pnl.add(new KhuyenMai_GUI(), BorderLayout.CENTER);
-		return pnl;
-	}
-//	quản lý nhân viên
-	private JPanel quanLyNV() {
-		JPanel pnl = new JPanel();
-		pnl.setBackground(Color.GREEN);
-		
-		return pnl;
-	}
 }
-	

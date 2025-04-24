@@ -58,11 +58,11 @@ public class ChiTietHoaDon_GUI extends JDialog implements ActionListener {
 
     /**
      * Constructor của Dialog chi tiết hóa đơn.
-     * @param parent Frame cha (ví dụ: HoaDon_GUI)
+     * @param hoaDon_GUI Frame cha (ví dụ: HoaDon_GUI)
      * @param hd     Đối tượng HoaDon cần hiển thị chi tiết.
      */
-    public ChiTietHoaDon_GUI(Frame parent, HoaDon hd) {
-        super(parent, true); // Gọi constructor JDialog, true để set modal
+    public ChiTietHoaDon_GUI(HoaDon_GUI hoaDon_GUI, HoaDon hd) {
+        super(); // Gọi constructor JDialog, true để set modal
         this.hoaDon = hd;
 
         // Khởi tạo DAO (cần connection)
@@ -72,7 +72,7 @@ public class ChiTietHoaDon_GUI extends JDialog implements ActionListener {
             sanPhamDAO = new SanPham_DAO(ConnectDB.getConnection());
         } catch (Exception e) {
             // Xử lý lỗi nếu không lấy được connection hoặc khởi tạo DAO thất bại
-            JOptionPane.showMessageDialog(parent, "Lỗi khởi tạo dữ liệu chi tiết hóa đơn: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(hoaDon_GUI, "Lỗi khởi tạo dữ liệu chi tiết hóa đơn: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
             // Có thể đóng dialog ngay nếu lỗi nghiêm trọng
              dispose(); // Đóng dialog nếu không thể khởi tạo DAO
@@ -82,7 +82,7 @@ public class ChiTietHoaDon_GUI extends JDialog implements ActionListener {
 
         setTitle("Chi Tiết Hóa Đơn - " + hoaDon.getMaHD());
         setSize(800, 650); // Kích thước dialog
-        setLocationRelativeTo(parent); // Hiển thị dialog giữa frame cha
+        setLocationRelativeTo(hoaDon_GUI); // Hiển thị dialog giữa frame cha
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE); // Đóng dialog khi nhấn nút X
         setLayout(new BorderLayout(10, 10)); // Layout chính cho dialog
         getRootPane().setBorder(new EmptyBorder(10, 10, 10, 10)); // Padding
