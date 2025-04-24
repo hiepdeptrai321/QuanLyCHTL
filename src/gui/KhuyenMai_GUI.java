@@ -503,18 +503,4 @@ public class KhuyenMai_GUI extends JPanel implements ActionListener {
              loadDataTable(); // Reload all data
         }
     }
-
-//    public static void main(String[] args) {
-//        // Set Look and Feel (optional but recommended)
-//
-//        EventQueue.invokeLater(() -> {
-//            try {
-//                KhuyenMai_GUI frame = new KhuyenMai_GUI();
-//                frame.setVisible(true);
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//                JOptionPane.showMessageDialog(null, "Không thể khởi chạy ứng dụng: " + e.getMessage(), "Lỗi nghiêm trọng", JOptionPane.ERROR_MESSAGE);
-//            }
-//        });
-//    }
 }
