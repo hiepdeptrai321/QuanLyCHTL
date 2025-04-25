@@ -18,7 +18,7 @@ public class TaiKhoan_DAO {
             ps.setString(1, tk.getMaTK());
             ps.setString(2, tk.getTenDN());
             ps.setString(3, tk.getMatKhau());
-            ps.setInt(4, tk.getVaiTro());
+            ps.setString(4, tk.getVaiTro());
             return ps.executeUpdate() > 0;
         }
     }
@@ -28,7 +28,7 @@ public class TaiKhoan_DAO {
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, tk.getTenDN());
             ps.setString(2, tk.getMatKhau());
-            ps.setInt(3, tk.getVaiTro());
+            ps.setString(3, tk.getVaiTro());
             ps.setString(4, tk.getMaTK());
             return ps.executeUpdate() > 0;
         }
@@ -42,17 +42,17 @@ public class TaiKhoan_DAO {
         }
     }
 
-    public TaiKhoan getById(String maTK) throws SQLException {
-        String sql = "SELECT * FROM TaiKhoan WHERE maTK=?";
+    public TaiKhoan getByTK(String tenDN) throws SQLException {
+        String sql = "SELECT * FROM TaiKhoan WHERE tenDN=?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, maTK);
+            ps.setString(1, tenDN);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 TaiKhoan tk = new TaiKhoan();
                 tk.setMaTK(rs.getString("maTK"));
                 tk.setTenDN(rs.getString("tenDN"));
                 tk.setMatKhau(rs.getString("matKhau"));
-                tk.setVaiTro(rs.getInt("vaiTro"));
+                tk.setVaiTro(rs.getString("vaiTro"));
                 return tk;
             }
             return null;
@@ -69,7 +69,7 @@ public class TaiKhoan_DAO {
                 tk.setMaTK(rs.getString("maTK"));
                 tk.setTenDN(rs.getString("tenDN"));
                 tk.setMatKhau(rs.getString("matKhau"));
-                tk.setVaiTro(rs.getInt("vaiTro"));
+                tk.setVaiTro(rs.getString("vaiTro"));
                 list.add(tk);
             }
         }
