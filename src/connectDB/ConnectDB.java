@@ -19,7 +19,7 @@ public class ConnectDB {
 		try {
 			con = DriverManager.getConnection(url, user, pass);
 		} catch (SQLException e) {
-			// TODO: handle exception
+			
 			e.printStackTrace();
 		}
 	}
@@ -29,7 +29,7 @@ public class ConnectDB {
 			try {
 				con.close();
 			} catch (SQLException e) {
-				// TODO: handle exception
+			
 				e.printStackTrace();
 			}
 		}

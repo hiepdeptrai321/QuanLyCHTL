@@ -1,7 +1,6 @@
 package gui;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.table.DefaultTableModel;
 import com.toedter.calendar.JDateChooser;
 
@@ -158,3 +157,4 @@ public class NhanVien_GUI extends JPanel implements ActionListener{
 //    	} 
     }
 }
+
