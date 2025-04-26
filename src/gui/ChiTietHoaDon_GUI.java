@@ -56,11 +56,6 @@ public class ChiTietHoaDon_GUI extends JDialog implements ActionListener {
     private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
     private NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
 
-    /**
-     * Constructor của Dialog chi tiết hóa đơn.
-     * @param hoaDon_GUI Frame cha (ví dụ: HoaDon_GUI)
-     * @param hd     Đối tượng HoaDon cần hiển thị chi tiết.
-     */
     public ChiTietHoaDon_GUI(HoaDon_GUI hoaDon_GUI, HoaDon hd) {
         super(); // Gọi constructor JDialog, true để set modal
         this.hoaDon = hd;

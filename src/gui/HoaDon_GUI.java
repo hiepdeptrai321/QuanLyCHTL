@@ -2,6 +2,7 @@ package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
@@ -12,6 +13,8 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.util.Date;
 import java.sql.SQLException;
 import java.text.NumberFormat;
@@ -42,6 +45,7 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
@@ -153,6 +157,7 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
         }
         // Ban đầu không chọn dòng nào thì nút Chi tiết bị mờ
         btnChiTiet.setEnabled(false);
+        
     }
 
     // --- Hàm tạo giao diện cho Tab Danh sách Hóa đơn ---
@@ -170,7 +175,7 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
 
         // --- Panel Tìm kiếm (Bên Trái) ---
         JPanel panelSearchLeft = new JPanel(new BorderLayout(5, 0));
-        panelSearchLeft.setBorder(BorderFactory.createTitledBorder("Tìm kiếm theo Mã Hóa Đơn"));
+        panelSearchLeft.setBorder(BorderFactory.createTitledBorder("Tìm theo mã hóa đơn"));
         panelSearchAndFilter.add(panelSearchLeft);
 
         txtTimKiem = new JTextField();
@@ -183,7 +188,7 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
 
         // --- Panel Bộ lọc (Bên Phải) ---
         JPanel panelFilterRight = new JPanel(new BorderLayout(5, 5));
-        panelFilterRight.setBorder(BorderFactory.createTitledBorder("Lọc và Sắp xếp"));
+        panelFilterRight.setBorder(BorderFactory.createTitledBorder("Lọc và sắp xếp"));
         panelSearchAndFilter.add(panelFilterRight);
 
         JPanel panelFilterControls = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
@@ -227,7 +232,7 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
         tableHoaDon.getTableHeader().setOpaque(false);
         tableHoaDon.getTableHeader().setBackground(new Color(173, 216, 230));
 
-        String[] columnNames = {"Mã HĐ", "Ngày Lập", "Thành Tiền", "Tổng SL SP", "Mã KH", "Tên NV"};
+        String[] columnNames = {"Mã HĐ", "Ngày lập", "Thành tiền", "Số lượng sản phẩm", "Mã KH", "Tên NV"};
         modelHoaDon = new DefaultTableModel(new Object[][]{}, columnNames) {
              @Override
              public boolean isCellEditable(int row, int column) {
@@ -255,7 +260,7 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
         panelSouth.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 5));
         panel.add(panelSouth, BorderLayout.SOUTH); // Thêm vào panel của tab
 
-        btnChiTiet = new JButton("Xem Chi Tiết Hóa Đơn");
+        btnChiTiet = new JButton("Xem chi tiết");
         btnChiTiet.setPreferredSize(new Dimension(200, 35));
         panelSouth.add(btnChiTiet);
 
@@ -275,7 +280,6 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
         return panel; // Trả về panel hoàn chỉnh cho tab danh sách
     }
 
-    // --- Hàm tạo giao diện cho Tab Tạo Hóa đơn mới (Placeholder) ---
     // --- Hàm tạo giao diện cho Tab Tạo Hóa đơn mới ---
     private JPanel createTaoHoaDonTab() {
         panelTaoHoaDon = new JPanel(new BorderLayout(10, 10)); // Layout chính cho tab
@@ -288,20 +292,18 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
         JPanel panelInputSP = new JPanel(new BorderLayout(5, 0));
         panelInputSP.setBorder(BorderFactory.createTitledBorder("Nhập mã sản phẩm"));
 
-        JLabel lblMaSPEntry = new JLabel("Mã SP:");
         txtMaSPEntry = new JTextField();
         txtMaSPEntry.setPreferredSize(new Dimension(150, 30));
         btnThemSP = new JButton("Thêm");
         btnThemSP.setPreferredSize(new Dimension(80, 30));
 
-        panelInputSP.add(lblMaSPEntry, BorderLayout.WEST);
         panelInputSP.add(txtMaSPEntry, BorderLayout.CENTER);
         panelInputSP.add(btnThemSP, BorderLayout.EAST);
 
         panelLeftPOS.add(panelInputSP, BorderLayout.NORTH);
 
         // Bảng chi tiết hóa đơn đang tạo
-        modelChiTietTaoHD = new DefaultTableModel(new String[]{"STT", "Mã SP", "Tên Sản Phẩm", "Số Lượng", "Đơn Giá", "Thành Tiền", "Xóa"}, 0) {
+        modelChiTietTaoHD = new DefaultTableModel(new String[]{"STT", "Mã SP", "Tên sản phẩm", "Số lượng", "Đơn giá", "Thành tiền", ""}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 // Chỉ cho phép sửa cột "Số Lượng" (index 3) và cột "Xóa" (index 6)
@@ -311,11 +313,11 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
             @Override
             public Class<?> getColumnClass(int columnIndex) {
                 switch (columnIndex) {
-                    case 0: return Integer.class; // STT
-                    case 3: return Integer.class; // Số Lượng
-                    case 4: return Double.class;  // Đơn Giá
-                    case 5: return Double.class;  // Thành Tiền
-                    case 6: return JButton.class; // Cột nút Xóa
+                    case 0: return Integer.class; 
+                    case 3: return Integer.class; 
+                    case 4: return Double.class;  
+                    case 5: return Double.class;  
+                    case 6: return JButton.class; 
                     default: return String.class;
                 }
             }
@@ -325,10 +327,9 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
         tableChiTietTaoHD.getTableHeader().setFont(new Font("Tahoma", Font.BOLD, 13));
 
         // --- Cấu hình cột Số Lượng dùng JSpinner ---
-        // (Cách này trực quan hơn là sửa trực tiếp) - Bỏ qua nếu muốn sửa trực tiếp
-         TableColumn quantityColumn = tableChiTietTaoHD.getColumnModel().getColumn(3);
-         JSpinner quantitySpinner = new JSpinner(new SpinnerNumberModel(1, 1, 1000, 1)); // Min 1, Max 1000
-//         quantityColumn.setCellEditor(new DefaultCellEditor(quantitySpinner));
+        TableColumn quantityColumn = tableChiTietTaoHD.getColumnModel().getColumn(3); 
+        quantityColumn.setCellEditor(new SpinnerEditor()); 
+     
 
         // --- Cấu hình cột Xóa ---
         TableColumnModel columnModelTaoHD = tableChiTietTaoHD.getColumnModel();
@@ -336,10 +337,26 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
         columnModelTaoHD.getColumn(6).setCellEditor(new ButtonEditor(new JCheckBox())); // Dùng editor tùy chỉnh
 
         // --- Định dạng các cột khác ---
-        setupTaoHDTableColumns(columnModelTaoHD); // Gọi hàm định dạng cột
+        setupTaoHDTableColumns(columnModelTaoHD); 
 
         scrollPaneChiTietTaoHD = new JScrollPane(tableChiTietTaoHD);
         panelLeftPOS.add(scrollPaneChiTietTaoHD, BorderLayout.CENTER);
+        
+        tableChiTietTaoHD.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                Component oppositeComponent = e.getOppositeComponent();
+                if (oppositeComponent != null && SwingUtilities.isDescendingFrom(oppositeComponent, tableChiTietTaoHD)) {
+                    return;
+                }
+                if (tableChiTietTaoHD.isEditing()) {
+                     if (!tableChiTietTaoHD.getCellEditor().stopCellEditing()) {
+                          tableChiTietTaoHD.getCellEditor().cancelCellEditing();
+                     }
+                }
+                tableChiTietTaoHD.clearSelection();
+            }
+        });
 
 
         // --- Khu vực Phải: Thông tin KH, Tổng kết, Thanh toán ---
@@ -398,19 +415,18 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
         JPanel panelSummaryPayment = new JPanel(new BorderLayout(0, 10));
         panelSummaryPayment.setBorder(BorderFactory.createTitledBorder("Thanh toán"));
 
-        JPanel panelSummaryFields = new JPanel(new GridLayout(0, 2, 10, 8)); // Grid 2 cột
-        panelSummaryFields.setBorder(new EmptyBorder(5, 5, 5, 5)); // Padding
-
+        JPanel panelSummaryFields = new JPanel(new GridLayout(0, 2, 10, 8)); 
+        panelSummaryFields.setBorder(new EmptyBorder(5, 5, 5, 5)); 
         panelSummaryFields.add(createLabelPOS("Tổng tiền hàng:"));
         lblTongTienHangValuePOS = createValueLabelPOS(SwingConstants.RIGHT);
         panelSummaryFields.add(lblTongTienHangValuePOS);
 
         panelSummaryFields.add(createLabelPOS("Giảm giá (KM):"));
-        lblGiamGiaValuePOS = createValueLabelPOS(SwingConstants.RIGHT); // Sẽ cập nhật sau
+        lblGiamGiaValuePOS = createValueLabelPOS(SwingConstants.RIGHT); 
         panelSummaryFields.add(lblGiamGiaValuePOS);
 
         panelSummaryFields.add(createLabelPOS("Thành tiền:"));
-        lblThanhTienValuePOS = createValueLabelPOS(SwingConstants.RIGHT, Font.BOLD, Color.RED); // In đậm, màu đỏ
+        lblThanhTienValuePOS = createValueLabelPOS(SwingConstants.RIGHT, Font.BOLD, Color.RED); 
         panelSummaryFields.add(lblThanhTienValuePOS);
 
         panelSummaryFields.add(createLabelPOS("Tiền nhận:"));
@@ -420,18 +436,18 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
         panelSummaryFields.add(txtTienNhanPOS);
 
         panelSummaryFields.add(createLabelPOS("Tiền thối lại:"));
-        lblTienThoiValuePOS = createValueLabelPOS(SwingConstants.RIGHT, Font.BOLD); // In đậm
+        lblTienThoiValuePOS = createValueLabelPOS(SwingConstants.RIGHT, Font.BOLD); 
         panelSummaryFields.add(lblTienThoiValuePOS);
 
         panelSummaryPayment.add(panelSummaryFields, BorderLayout.CENTER);
 
         // Panel Nút Thanh toán / Hủy
         JPanel panelActionButtons = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 5));
-        btnThanhToan = new JButton("Thanh Toán");
+        btnThanhToan = new JButton("Thanh toán");
         btnThanhToan.setFont(new Font("Tahoma", Font.BOLD, 14));
         btnThanhToan.setPreferredSize(new Dimension(150, 40));
 
-        btnHuyHoaDon = new JButton("Hủy Hóa Đơn");
+        btnHuyHoaDon = new JButton("Hủy hóa đơn");
         btnHuyHoaDon.setPreferredSize(new Dimension(150, 40));
 
         panelActionButtons.add(btnThanhToan);
@@ -444,32 +460,135 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
 
         // --- Sử dụng JSplitPane để chia đôi ---
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, panelLeftPOS, panelRightPOS);
-        splitPane.setDividerLocation(700); // Vị trí thanh chia, điều chỉnh cho phù hợp
-        splitPane.setResizeWeight(0.6); // Tỷ lệ phân chia khi resize cửa sổ
+        splitPane.setDividerLocation(750); 
+        splitPane.setResizeWeight(0.6); 
         panelTaoHoaDon.add(splitPane, BorderLayout.CENTER);
 
         // --- Thêm sự kiện ---
         addListenersTaoHDTab();
-        resetTaoHoaDonTab(); // Đặt trạng thái ban đầu
+        resetTaoHoaDonTab();
 
 
         // --- Listener cho model bảng chi tiết để tự cập nhật tổng tiền ---
+
         modelChiTietTaoHD.addTableModelListener(new TableModelListener() {
+            private boolean updating = false;
+
             @Override
             public void tableChanged(TableModelEvent e) {
-                // Khi dữ liệu bảng thay đổi (thêm, xóa, sửa số lượng) -> cập nhật tổng tiền
-                if (e.getType() == TableModelEvent.UPDATE || e.getType() == TableModelEvent.INSERT || e.getType() == TableModelEvent.DELETE) {
-                    updateSummaryPOS();
+                if (updating) {
+                    return;
                 }
+
+                if (e.getType() == TableModelEvent.UPDATE) {
+                    int row = e.getFirstRow();
+                    int column = e.getColumn();
+
+                    if (column == 3) { // Chỉ xử lý khi cột Số Lượng (index 3) thay đổi
+                        if (row >= 0 && row < modelChiTietTaoHD.getRowCount()) {
+                            updating = true;
+                            try {
+                                Object quantityObj = modelChiTietTaoHD.getValueAt(row, 3);
+                                Object priceObj = modelChiTietTaoHD.getValueAt(row, 4);
+
+                                if (quantityObj instanceof Number && priceObj instanceof Number) {
+                                    int quantity = ((Number) quantityObj).intValue();
+                                    double unitPrice = ((Number) priceObj).doubleValue();
+
+                                    if (quantity < 1) {
+                                        quantity = 1;
+                                        final int finalQuantity = quantity;
+                                        SwingUtilities.invokeLater(() -> {
+                                             if(row < modelChiTietTaoHD.getRowCount()){
+                                                 modelChiTietTaoHD.setValueAt(finalQuantity, row, 3);
+                                             }
+                                        });
+                                        JOptionPane.showMessageDialog(panelTaoHoaDon, "Số lượng phải ít nhất là 1.", "Số lượng không hợp lệ", JOptionPane.WARNING_MESSAGE);
+                                        updating = false;
+                                        return;
+                                    }
+
+                                    double newLineTotal = quantity * unitPrice;
+                                    modelChiTietTaoHD.setValueAt(newLineTotal, row, 5); // Cập nhật cột Thành Tiền (index 5)
+
+                                     if(row < dsChiTietHoaDonTam.size()) {
+                                        String maSP_Check = modelChiTietTaoHD.getValueAt(row, 1).toString();
+                                        ChiTietHoaDon cthd_tam = dsChiTietHoaDonTam.get(row);
+                                        if (cthd_tam.getMaSP().equals(maSP_Check)) {
+                                              cthd_tam.setSoLuong(quantity);
+                                        } else {
+                                             for(ChiTietHoaDon ct : dsChiTietHoaDonTam) {
+                                                 if(ct.getMaSP().equals(maSP_Check)) {
+                                                     ct.setSoLuong(quantity);
+                                                     break;
+                                                 }
+                                             }
+                                        }
+                                    }
+
+                                } else {
+                                     System.err.println("Kiểu dữ liệu không hợp lệ tại dòng " + row);
+                                     // Cần phải có xử lý an toàn hơn ở đây nếu cần thiết
+                                     final int finalRow = row; // Cần final để dùng trong lambda
+                                      SwingUtilities.invokeLater(() -> {
+                                         if(finalRow < modelChiTietTaoHD.getRowCount()) {
+                                             modelChiTietTaoHD.setValueAt(0.0, finalRow, 5);
+                                         }
+                                     });
+                                }
+                            } catch (Exception ex) {
+                                System.err.println("Lỗi khi cập nhật thành tiền tự động: " + ex.getMessage());
+                                ex.printStackTrace();
+                                 final int finalRow = row;
+                                 SwingUtilities.invokeLater(() -> {
+                                     if(finalRow < modelChiTietTaoHD.getRowCount()) {
+                                         modelChiTietTaoHD.setValueAt(0.0, finalRow, 5);
+                                     }
+                                 });
+                            } finally {
+                                 updating = false;
+                            }
+                        }
+                    }
+                }
+
+                 // Luôn cập nhật tổng kết sau khi có thay đổi (và không phải đang xử lý lồng nhau)
+                 if (!updating && e.getType() != TableModelEvent.HEADER_ROW) {
+                    updateSummaryPOS();
+                 }
             }
         });
 
 
         return panelTaoHoaDon;
     }
+    static class SpinnerEditor extends AbstractCellEditor implements TableCellEditor {
+        final JSpinner spinner;
+        public SpinnerEditor() {
+            spinner = new JSpinner(new SpinnerNumberModel(1, 1, 9999, 1));
+            spinner.setBorder(null);
+        }
+
+        @Override
+        public Component getTableCellEditorComponent(JTable table, Object value,
+                                               boolean isSelected, int row, int column) {
+            if (value instanceof Number) {
+                spinner.setValue(((Number) value).intValue());
+            } else {
+                spinner.setValue(1);
+            }
+            return spinner;
+        }
+
+        @Override
+        public Object getCellEditorValue() {
+            return spinner.getValue();
+        }
+    }
 
      // --- Hàm định dạng các cột trong bảng Tạo Hóa Đơn ---
-    private void setupTaoHDTableColumns(TableColumnModel columnModel) {
+    @SuppressWarnings("serial")
+	private void setupTaoHDTableColumns(TableColumnModel columnModel) {
          // Renderer căn phải cho số/tiền
          DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
          rightRenderer.setHorizontalAlignment(JLabel.RIGHT);
@@ -488,19 +607,18 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
          };
 
 
-        columnModel.getColumn(0).setPreferredWidth(30); // STT
+        columnModel.getColumn(0).setPreferredWidth(30); 
         columnModel.getColumn(0).setCellRenderer(centerRenderer);
-        columnModel.getColumn(1).setPreferredWidth(80); // Mã SP
+        columnModel.getColumn(1).setPreferredWidth(80); 
         columnModel.getColumn(1).setCellRenderer(centerRenderer);
-        columnModel.getColumn(2).setPreferredWidth(250); // Tên SP
-        columnModel.getColumn(3).setPreferredWidth(70);  // Số Lượng
-        columnModel.getColumn(3).setCellRenderer(centerRenderer); // Căn giữa số lượng
-        columnModel.getColumn(4).setPreferredWidth(100); // Đơn Giá
+        columnModel.getColumn(2).setPreferredWidth(250); 
+        columnModel.getColumn(3).setPreferredWidth(70);  
+        columnModel.getColumn(3).setCellRenderer(centerRenderer); 
+        columnModel.getColumn(4).setPreferredWidth(100); 
         columnModel.getColumn(4).setCellRenderer(currencyRenderer);
-        columnModel.getColumn(5).setPreferredWidth(110); // Thành Tiền
+        columnModel.getColumn(5).setPreferredWidth(120); 
         columnModel.getColumn(5).setCellRenderer(currencyRenderer);
-        columnModel.getColumn(6).setPreferredWidth(50);  // Nút Xóa
-        // Renderer và Editor đã set ở trên
+        columnModel.getColumn(6).setPreferredWidth(30);
     }
 
      // --- Hàm thêm listeners cho các component trong Tab Tạo Hóa Đơn ---
@@ -825,42 +943,47 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
     // --- Lớp nội danh (inner class) cho Renderer và Editor của nút Xóa ---
 
     // Class để vẽ button trên JTable
-     class ButtonRenderer extends JButton implements TableCellRenderer {
+    static class ButtonRenderer extends JButton implements TableCellRenderer {
         public ButtonRenderer() {
-            setOpaque(true);
-            setText("Xóa"); // Hoặc dùng icon
-            // setPreferredSize(new Dimension(40, 20)); // Kích thước nút nhỏ
+            setText("X");                     
+            setForeground(Color.RED);       
+            setFont(new Font("Arial", Font.BOLD, 14)); 
+            setBorderPainted(false);    
+            setFocusPainted(false);  
         }
+
         @Override
-        public java.awt.Component getTableCellRendererComponent(JTable table, Object value,
-                               
-                               boolean isSelected, boolean hasFocus, int row, int column) {
-            // Đổi màu nền khi được chọn (tùy chọn)
-            // if (isSelected) {
-            //     setForeground(table.getSelectionForeground());
-            //     setBackground(table.getSelectionBackground());
-            // } else {
-            //     setForeground(table.getForeground());
-            //     setBackground(UIManager.getColor("Button.background"));
-            // }
+        public Component getTableCellRendererComponent(JTable table, Object value,
+                                       boolean isSelected, boolean hasFocus, int row, int column) {
+            if (isSelected) {
+                setForeground(table.getSelectionForeground());
+                setBackground(table.getSelectionBackground());
+            } else {
+                setForeground(Color.WHITE); 
+                setBackground(Color.RED); 
+            }
             return this;
         }
     }
 
     // Class để xử lý sự kiện click button trên JTable
-    class ButtonEditor extends AbstractCellEditor implements TableCellEditor, ActionListener {
+    @SuppressWarnings("serial")
+	class ButtonEditor extends AbstractCellEditor implements TableCellEditor, ActionListener {
         private JButton button;
         private String label;
-        private boolean isPushed;
+		private boolean isPushed;
         private int editingRow;
         private JTable table;
 
-        public ButtonEditor(JCheckBox checkBox) { // Truyền vào gì cũng được, ko dùng
+        public ButtonEditor(JCheckBox checkBox) {
             button = new JButton();
-            button.setOpaque(true);
             button.addActionListener(this);
-            button.setText("Xóa");
-             // button.setPreferredSize(new Dimension(40, 20));
+            button.setText("X");
+            button.setForeground(Color.RED);
+            button.setFont(new Font("Arial", Font.BOLD, 14));
+            button.setContentAreaFilled(false);
+            button.setBorderPainted(false);
+            button.setFocusPainted(false);
         }
 
         @Override
@@ -868,8 +991,6 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
                                    boolean isSelected, int row, int column) {
             this.table = table;
             this.editingRow = row;
-            // label = (value == null) ? "" : value.toString();
-            // button.setText(label);
             isPushed = true;
             return button;
         }
@@ -898,13 +1019,8 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
              fireEditingStopped();
              // Xử lý xóa dòng
              if (editingRow >= 0 && editingRow < modelChiTietTaoHD.getRowCount()) {
-                 // Xác nhận xóa (tùy chọn)
-                 // int confirm = JOptionPane.showConfirmDialog(panelTaoHoaDon, "Xóa sản phẩm này khỏi hóa đơn?", "Xác nhận", JOptionPane.YES_NO_OPTION);
-                 // if (confirm == JOptionPane.YES_OPTION) {
                       modelChiTietTaoHD.removeRow(editingRow);
-                      // Cập nhật lại STT sau khi xóa
                       updateSTTTable();
-                 // }
              }
         }
     }
@@ -931,7 +1047,8 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
      }
 
 
-    private void setupTableRenderersAndWidths() {
+    @SuppressWarnings("serial")
+	private void setupTableRenderersAndWidths() {
          TableColumnModel columnModel = tableHoaDon.getColumnModel();
          DefaultTableCellRenderer rightRenderer = new DefaultTableCellRenderer();
          rightRenderer.setHorizontalAlignment(JLabel.RIGHT);
@@ -1012,7 +1129,6 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
                  loadDataToTable(resultList);
             } else {
                  JOptionPane.showMessageDialog(this, "Không tìm thấy hóa đơn nào có mã: " + keyword);
-                 loadDataToTable(new ArrayList<>());
             }
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Lỗi khi tìm kiếm hóa đơn: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
@@ -1038,7 +1154,6 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
              if (!tangDan) { comparator = comparator.reversed(); }
              currentHoaDonList.sort(comparator);
              loadDataToTable(currentHoaDonList);
-             JOptionPane.showMessageDialog(this, "Đã sắp xếp danh sách hóa đơn.", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
          }
     }
 
@@ -1065,7 +1180,6 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
                      // --- Mở Dialog Chi tiết Hóa đơn ---
                      ChiTietHoaDon_GUI dialog = new ChiTietHoaDon_GUI(this, hdSelected); 
                      dialog.setVisible(true);
-                     JOptionPane.showMessageDialog(this, "Không tìm thấy thông tin chi tiết cho hóa đơn: " + maHD, "Lỗi", JOptionPane.WARNING_MESSAGE);
                 }
              } catch(SQLException ex) {
                   JOptionPane.showMessageDialog(this, "Lỗi khi lấy chi tiết hóa đơn: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
@@ -1108,26 +1222,4 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
         }
     }
 
-    public static void main(String[] args) {
-        try {
-            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (Exception e) {
-           System.err.println("Nimbus Look and Feel not found. Using default.");
-        }
-
-        EventQueue.invokeLater(() -> {
-            try {
-                HoaDon_GUI frame = new HoaDon_GUI();
-                frame.setVisible(true);
-            } catch (Exception e) {
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(null, "Không thể khởi chạy giao diện Hóa đơn: " + e.getMessage(), "Lỗi nghiêm trọng", JOptionPane.ERROR_MESSAGE);
-            }
-        });
-    }
 }
