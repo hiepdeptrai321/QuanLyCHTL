@@ -22,8 +22,9 @@ public class DangNhap_GUI extends JFrame implements ActionListener {
 	private TaiKhoan_DAO tk;
 	private NhanVien_DAO nv;
 	private NguoiQuanLy_DAO ql;
+	public static String MaQLTemp;
 	public static NhanVien nhanVienHienHanh;
-	
+	public static boolean quanLyCheck = false;
 
     public DangNhap_GUI() {
         super("Đăng nhập hệ thống");
@@ -130,7 +131,9 @@ public class DangNhap_GUI extends JFrame implements ActionListener {
             lblError.setText("");
             
             if(tkTemp.getVaiTro().compareTo("quanly")==0) {
+            	quanLyCheck =true;
             	try {
+            		MaQLTemp = tkTemp.getMaTK();
             		nhanVienHienHanh = ql.getByTK(tkTemp.getMaTK());
             	} catch (SQLException e1) {
 	            	// TODO Auto-generated catch block

@@ -4,3 +4,6 @@
 /entity/
 /connectDB/
 /HoaDon_Proc.sql
+/Procedure.sql
+/NhanVien_Proc.sql
+/NhanVien_TaiKhoan_Proc.sql

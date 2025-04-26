@@ -13,24 +13,24 @@ public class TaiKhoan_DAO {
     }
 
     public boolean insert(TaiKhoan tk) throws SQLException {
-        String sql = "INSERT INTO TaiKhoan (maTK, tenDN, matKhau, vaiTro) VALUES (?, ?, ?, ?)";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, tk.getMaTK());
-            ps.setString(2, tk.getTenDN());
-            ps.setString(3, tk.getMatKhau());
-            ps.setString(4, tk.getVaiTro());
-            return ps.executeUpdate() > 0;
+        String sql = "{call sp_InsertTaiKhoan(?, ?, ?, ?)}";
+        try (CallableStatement cs = conn.prepareCall(sql)) {
+            cs.setString(1, tk.getMaTK());
+            cs.setString(2, tk.getTenDN());
+            cs.setString(3, tk.getMatKhau());
+            cs.setString(4, tk.getVaiTro());
+            return cs.executeUpdate() > 0;
         }
     }
 
     public boolean update(TaiKhoan tk) throws SQLException {
-        String sql = "UPDATE TaiKhoan SET tenDN=?, matKhau=?, vaiTro=? WHERE maTK=?";
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, tk.getTenDN());
-            ps.setString(2, tk.getMatKhau());
-            ps.setString(3, tk.getVaiTro());
-            ps.setString(4, tk.getMaTK());
-            return ps.executeUpdate() > 0;
+        String sql = "{call sp_UpdateTaiKhoan(?, ?, ?, ?)}";
+        try (CallableStatement cs = conn.prepareCall(sql)) {
+            cs.setString(1, tk.getMaTK());
+            cs.setString(2, tk.getTenDN());
+            cs.setString(3, tk.getMatKhau());
+            cs.setString(4, tk.getVaiTro());
+            return cs.executeUpdate() > 0;
         }
     }
 

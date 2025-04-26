@@ -37,11 +37,10 @@ CREATE TABLE NhaCungCap (
 );
 
 CREATE TABLE TaiKhoan (
-    maTK INT PRIMARY KEY IDENTITY(1,1),
+    maTK NVARCHAR(50) PRIMARY KEY,
     tenDN NVARCHAR(35),
     matKhau NVARCHAR(35),
-    vaiTro NVARCHAR(50),
-	maTKFormatted AS CONCAT('TK', maTK)
+    vaiTro NVARCHAR(50)
 );
 
 CREATE TABLE NguoiQuanLy (
@@ -53,7 +52,7 @@ CREATE TABLE NguoiQuanLy (
     email NVARCHAR(50),
     namSinh DATE,
     diaChi NVARCHAR(255), -- Nên là NVARCHAR(255)
-    maTK INT,
+    maTK NVARCHAR(50),
     FOREIGN KEY (maTK) REFERENCES TaiKhoan(maTK)
 );
 
@@ -89,14 +88,14 @@ CREATE TABLE NhanVien (
     ma NVARCHAR(50) PRIMARY KEY,
     ngayVaoLam DATE,
     luong FLOAT,
-    caLam DATE,
+    caLam NVARCHAR(50),
     hoTen NVARCHAR(50), -- Nên là NVARCHAR(50)
     sdt NVARCHAR(12),
     email NVARCHAR(50),
     namSinh DATE,
     diaChi NVARCHAR(255), -- Nên là NVARCHAR(255)
     maNQL NVARCHAR(50),
-    maTK INT,
+    maTK NVARCHAR(50),
     FOREIGN KEY (maNQL) REFERENCES NguoiQuanLy(ma),
     FOREIGN KEY (maTK) REFERENCES TaiKhoan(maTK)
 );
@@ -189,13 +188,16 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
-    INSERT INTO dbo.TaiKhoan (tenDN,matKhau,vaiTro)
+    INSERT INTO dbo.TaiKhoan (maTK,tenDN,matKhau,vaiTro)
     SELECT
+		i.ma,
         i.ma,         
         '1',
-		'nhanVien'
-    FROM
-        inserted i;
+		CASE 
+            WHEN LEFT(i.ma, 2) = 'QL' THEN 'quanly'
+            ELSE 'nhanvien'
+        END
+    FROM inserted i;
 END;
 GO
 -- =============================
@@ -243,19 +245,13 @@ VALUES
 ('NCC10', N'Công ty Vissan', N'100 Lê Duẩn, TP.HCM', '0833221144', 4);
 
 -- TaiKhoan
-INSERT INTO TaiKhoan (maTK, tenDN, matKhau, vaiTro)
+INSERT INTO TaiKhoan (maTK,tenDN, matKhau, vaiTro)
 VALUES
-('admin', 'admin123', 'admin'),
-('qly2', 'ql456', 'quanly'),
-('qly1', 'ql123', 'quanly'),
-('nhanvien02', 'nv456', 'nhanvien'),
-('nhanvien01', 'nv123', 'nhanvien'),
-('nhanvien03', 'nv631', 'nhanvien'),
-('nhanvien04', 'nv333', 'nhanvien'),
-('nhanvien05', 'nv369', 'nhanvien'),
-('hiep', 'hiep123', 'quanly'),
-('cong', 'cong123', 'quanly'),
-('an', 'an123', 'quanly');
+('QL100', 'hiep', 'hiep123', 'quanly'),
+('QL200', 'cong', 'cong123', 'quanly'),
+('QL300', 'an', 'an123', 'quanly')
+
+
 
 
 
@@ -266,7 +262,8 @@ VALUES
 ('QL04', 'A1', 1000000, N'Hoàng Phước Thành Công', '0912345678', 'an@gmail.com', '2005-01-01', N'1 Lê Lợi'),
 ('QL05', 'A1', 1000000, N'Đàm Thái An', '0912345678', 'an@gmail.com', '2005-01-01', N'1 Lê Lợi'),
 ('QL01', 'A1', 1000000, N'Nguyễn Văn An', '0912345678', 'an@gmail.com', '2005-01-01', N'1 Lê Lợi'),
-('QL02', 'A2', 1100000, N'Trần Thị Bình', '0912345679', 'binh@gmail.com', '1990-02-02', N'2 Nguyễn Huệ');
+('QL02', 'A2', 1100000, N'Trần Thị Bình', '0912345679', 'binh@gmail.com', '1990-02-02', N'2 Nguyễn Huệ')
+
 
 -- SanPham
 INSERT INTO SanPham (maSP, tenSP, giaBan, giaGoc, maNH, maLoai, maNCC, maNQL)
@@ -299,16 +296,16 @@ VALUES
 -- NhanVien
 INSERT INTO NhanVien (ma, ngayVaoLam, luong, caLam, hoTen, sdt, email, namSinh, diaChi, maNQL)
 VALUES
-('NV01', '2023-01-01', 10000000, N'T4 (22:00-06:00)', N'Lê Văn A', '0911000001', 'a@gmail.com', '1995-01-01', N'123 Đường A', NULL),
-('NV02', '2023-02-01', 9500000,  N'CN (07:00-11:00)', N'Trần Thị B', '0911000002', 'b@gmail.com', '1996-02-02', N'234 Đường B', NULL),
-('NV03', '2023-03-01', 11000000, N'T2 (13:00-17:00)', N'Nguyễn Văn C', '0911000003', 'c@gmail.com', '1997-03-03', N'345 Đường C', NULL),
-('NV04', '2023-04-01', 9000000,  N'T3 (17:30-21:30)', N'Lê Thị D', '0911000004', 'd@gmail.com', '1998-04-04', N'456 Đường D', NULL),
-('NV05', '2023-05-01', 10500000, N'T4 (22:00-06:00)', N'Phạm Văn E', '0911000005', 'e@gmail.com', '1999-05-05', N'567 Đường E', NULL),
-('NV06', '2023-06-01', 9700000,  N'CN (07:00-11:00)', N'Huỳnh Thị F', '0911000006', 'f@gmail.com', '1994-06-06', N'678 Đường F', NULL),
-('NV07', '2023-07-01', 10200000, N'T2 (13:00-17:00)', N'Đỗ Văn G', '0911000007', 'g@gmail.com', '1993-07-07', N'789 Đường G', NULL),
-('NV08', '2023-08-01', 9800000,  N'T3 (17:30-21:30)', N'Vũ Thị H', '0911000008', 'h@gmail.com', '1992-08-08', N'890 Đường H', NULL),
-('NV09', '2023-09-01', 10800000, N'T4 (22:00-06:00)', N'Mai Văn I', '0911000009', 'i@gmail.com', '1991-09-09', N'901 Đường I', NULL),
-('NV10', '2023-10-01', 9500000,  N'CN (07:00-11:00)', N'Phan Thị K', '0911000010', 'k@gmail.com', '1990-10-10', N'012 Đường K', NULL);
+('NV01', '2023-01-01', 10000000, N'T4 (22:00-06:00)', N'Lê Văn A', '0911000001', 'a@gmail.com', '1995-01-01', N'123 Đường A', 'QL01'),
+('NV02', '2023-02-01', 9500000,  N'CN (07:00-11:00)', N'Trần Thị B', '0911000002', 'b@gmail.com', '1996-02-02', N'234 Đường B', 'QL01'),
+('NV03', '2023-03-01', 11000000, N'T2 (13:00-17:00)', N'Nguyễn Văn C', '0911000003', 'c@gmail.com', '1997-03-03', N'345 Đường C', 'QL01'),
+('NV04', '2023-04-01', 9000000,  N'T3 (17:30-21:30)', N'Lê Thị D', '0911000004', 'd@gmail.com', '1998-04-04', N'456 Đường D', 'QL01'),
+('NV05', '2023-05-01', 10500000, N'T4 (22:00-06:00)', N'Phạm Văn E', '0911000005', 'e@gmail.com', '1999-05-05', N'567 Đường E', 'QL01'),
+('NV06', '2023-06-01', 9700000,  N'CN (07:00-11:00)', N'Huỳnh Thị F', '0911000006', 'f@gmail.com', '1994-06-06', N'678 Đường F', 'QL01'),
+('NV07', '2023-07-01', 10200000, N'T2 (13:00-17:00)', N'Đỗ Văn G', '0911000007', 'g@gmail.com', '1993-07-07', N'789 Đường G', 'QL01'),
+('NV08', '2023-08-01', 9800000,  N'T3 (17:30-21:30)', N'Vũ Thị H', '0911000008', 'h@gmail.com', '1992-08-08', N'890 Đường H', 'QL01'),
+('NV09', '2023-09-01', 10800000, N'T4 (22:00-06:00)', N'Mai Văn I', '0911000009', 'i@gmail.com', '1991-09-09', N'901 Đường I', 'QL01'),
+('NV10', '2023-10-01', 9500000,  N'CN (07:00-11:00)', N'Phan Thị K', '0911000010', 'k@gmail.com', '1990-10-10', N'012 Đường K', 'QL01');
 
 -- KhachHang
 INSERT INTO KhachHang (ma, ngayDangKy, diemTichLuy, hangThanhVien, soLanMuaHang, hoTen, sdt, email, namSinh, diaChi, maNV)
@@ -363,3 +360,4 @@ select * from [dbo].[NhanHang]
 select * from [dbo].[NhanVien]
 select * from [dbo].[SanPham]
 select * from [dbo].[TaiKhoan] 
+

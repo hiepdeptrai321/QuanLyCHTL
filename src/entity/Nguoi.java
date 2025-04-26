@@ -1,6 +1,6 @@
 package entity;
 
-import java.sql.Date;
+import java.util.Date;
 
 public class Nguoi {
     private String ma;
@@ -51,8 +51,8 @@ public class Nguoi {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	public void setNamSinh(Date namSinh) {
-		this.namSinh = namSinh;
+	public void setNamSinh(Date date) {
+		this.namSinh = date;
 	}
 	public void setDiaChi(String diaChi) {
 		this.diaChi = diaChi;
