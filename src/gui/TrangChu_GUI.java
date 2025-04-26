@@ -23,7 +23,7 @@ public class TrangChu_GUI extends JFrame implements MouseListener,ActionListener
 	
 	public TrangChu_GUI() {
 		super("Cửa hàng tiện lợi");
-		setSize(1400,800);
+		setSize(1600,800);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);
 		JPanel pnlAll = new JPanel(new BorderLayout());

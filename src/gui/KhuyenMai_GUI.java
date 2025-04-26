@@ -241,23 +241,7 @@ public class KhuyenMai_GUI extends JPanel implements ActionListener {
 
         loadDataTable();
         lamMoiFormChiTiet(); // Set initial state (form ready for add)
-        
-        try {
-            // Use Nimbus for a modern look, or System Look and Feel
-           for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-               if ("Nimbus".equals(info.getName())) {
-                   UIManager.setLookAndFeel(info.getClassName());
-                   break;
-               }
-           }
-           // If Nimbus not available, fallback to System L&F
-           // UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-       } catch (Exception e) {
-            // If L&F setting fails, it might default to Metal, which is okay
-           e.printStackTrace();
-       }
-
-        setVisible(true);
+      
     }
 
     private void loadDataTable() {
@@ -519,18 +503,4 @@ public class KhuyenMai_GUI extends JPanel implements ActionListener {
              loadDataTable(); // Reload all data
         }
     }
-
-//    public static void main(String[] args) {
-//        // Set Look and Feel (optional but recommended)
-//
-//        EventQueue.invokeLater(() -> {
-//            try {
-//                KhuyenMai_GUI frame = new KhuyenMai_GUI();
-//                frame.setVisible(true);
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//                JOptionPane.showMessageDialog(null, "Không thể khởi chạy ứng dụng: " + e.getMessage(), "Lỗi nghiêm trọng", JOptionPane.ERROR_MESSAGE);
-//            }
-//        });
-//    }
 }
