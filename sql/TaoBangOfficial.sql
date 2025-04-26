@@ -37,10 +37,11 @@ CREATE TABLE NhaCungCap (
 );
 
 CREATE TABLE TaiKhoan (
-    maTK NVARCHAR(50) PRIMARY KEY,
+    maTK INT PRIMARY KEY IDENTITY(1,1),
     tenDN NVARCHAR(35),
     matKhau NVARCHAR(35),
-    vaiTro NVARCHAR(50) -- Nên là NVARCHAR(50)
+    vaiTro NVARCHAR(50),
+	maTKFormatted AS CONCAT('TK', maTK)
 );
 
 CREATE TABLE NguoiQuanLy (
@@ -52,7 +53,7 @@ CREATE TABLE NguoiQuanLy (
     email NVARCHAR(50),
     namSinh DATE,
     diaChi NVARCHAR(255), -- Nên là NVARCHAR(255)
-    maTK NVARCHAR(50),
+    maTK INT,
     FOREIGN KEY (maTK) REFERENCES TaiKhoan(maTK)
 );
 
@@ -95,7 +96,7 @@ CREATE TABLE NhanVien (
     namSinh DATE,
     diaChi NVARCHAR(255), -- Nên là NVARCHAR(255)
     maNQL NVARCHAR(50),
-    maTK NVARCHAR(50),
+    maTK INT,
     FOREIGN KEY (maNQL) REFERENCES NguoiQuanLy(ma),
     FOREIGN KEY (maTK) REFERENCES TaiKhoan(maTK)
 );
@@ -181,6 +182,22 @@ BEGIN
 END;
 GO
 
+CREATE TRIGGER trg_themTaiKhoanSauKhiTaoNhanVien
+ON dbo.NhanVien
+AFTER INSERT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    INSERT INTO dbo.TaiKhoan (tenDN,matKhau,vaiTro)
+    SELECT
+        i.ma,         
+        '1',
+		'nhanVien'
+    FROM
+        inserted i;
+END;
+GO
 -- =============================
 --Chèn dữ liệu
 -- =============================
@@ -228,28 +245,28 @@ VALUES
 -- TaiKhoan
 INSERT INTO TaiKhoan (maTK, tenDN, matKhau, vaiTro)
 VALUES
-('TK01', 'admin', 'admin123', 'admin'),
-('TK102', 'qly2', 'ql456', 'quanly'),
-('TK103', 'qly1', 'ql123', 'quanly'),
-('TK04', 'nhanvien02', 'nv456', 'nhanvien'),
-('TK05', 'nhanvien01', 'nv123', 'nhanvien'),
-('TK06', 'nhanvien03', 'nv631', 'nhanvien'),
-('TK07', 'nhanvien04', 'nv333', 'nhanvien'),
-('TK08', 'nhanvien05', 'nv369', 'nhanvien'),
-('TK104', 'hiep', 'hiep123', 'quanly'),
-('TK105', 'cong', 'cong123', 'quanly'),
-('TK106', 'an', 'an123', 'quanly');
+('admin', 'admin123', 'admin'),
+('qly2', 'ql456', 'quanly'),
+('qly1', 'ql123', 'quanly'),
+('nhanvien02', 'nv456', 'nhanvien'),
+('nhanvien01', 'nv123', 'nhanvien'),
+('nhanvien03', 'nv631', 'nhanvien'),
+('nhanvien04', 'nv333', 'nhanvien'),
+('nhanvien05', 'nv369', 'nhanvien'),
+('hiep', 'hiep123', 'quanly'),
+('cong', 'cong123', 'quanly'),
+('an', 'an123', 'quanly');
 
 
 
 -- NguoiQuanLy
-INSERT INTO NguoiQuanLy (ma, capBac, phuCap, hoTen, sdt, email, namSinh, diaChi, maTK)
+INSERT INTO NguoiQuanLy (ma, capBac, phuCap, hoTen, sdt, email, namSinh, diaChi)
 VALUES
-('QL03', 'A1', 1000000, N'Đỗ Phú Hiệp', '0912345678', 'an@gmail.com', '2005-01-01', N'1 Lê Lợi', 'TK104'),
-('QL04', 'A1', 1000000, N'Hoàng Phước Thành Công', '0912345678', 'an@gmail.com', '2005-01-01', N'1 Lê Lợi', 'TK105'),
-('QL05', 'A1', 1000000, N'Đàm Thái An', '0912345678', 'an@gmail.com', '2005-01-01', N'1 Lê Lợi', 'TK106'),
-('QL01', 'A1', 1000000, N'Nguyễn Văn An', '0912345678', 'an@gmail.com', '2005-01-01', N'1 Lê Lợi', 'TK102'),
-('QL02', 'A2', 1100000, N'Trần Thị Bình', '0912345679', 'binh@gmail.com', '1990-02-02', N'2 Nguyễn Huệ', 'TK103');
+('QL03', 'A1', 1000000, N'Đỗ Phú Hiệp', '0912345678', 'an@gmail.com', '2005-01-01', N'1 Lê Lợi'),
+('QL04', 'A1', 1000000, N'Hoàng Phước Thành Công', '0912345678', 'an@gmail.com', '2005-01-01', N'1 Lê Lợi'),
+('QL05', 'A1', 1000000, N'Đàm Thái An', '0912345678', 'an@gmail.com', '2005-01-01', N'1 Lê Lợi'),
+('QL01', 'A1', 1000000, N'Nguyễn Văn An', '0912345678', 'an@gmail.com', '2005-01-01', N'1 Lê Lợi'),
+('QL02', 'A2', 1100000, N'Trần Thị Bình', '0912345679', 'binh@gmail.com', '1990-02-02', N'2 Nguyễn Huệ');
 
 -- SanPham
 INSERT INTO SanPham (maSP, tenSP, giaBan, giaGoc, maNH, maLoai, maNCC, maNQL)
@@ -280,13 +297,18 @@ VALUES
 ('KM10', N'Valentine Deal', 6, '2026-02-01', '2026-02-14', N'Ưu đãi ngọt ngào dành cho ngày Lễ Tình Nhân Valentine.', 'SP10', 'QL01');
 
 -- NhanVien
-INSERT INTO NhanVien (ma, ngayVaoLam, luong, caLam, hoTen, sdt, email, namSinh, diaChi, maNQL, maTK)
+INSERT INTO NhanVien (ma, ngayVaoLam, luong, caLam, hoTen, sdt, email, namSinh, diaChi, maNQL)
 VALUES
-('NV01', '2024-01-01', 6000000, '2024-04-01', N'Trần Văn Bảo', '0909876543', 'bao@gmail.com', '1995-06-01', N'456 Lê Lai', 'QL01', 'TK04'),
-('NV02', '2024-02-01', 6500000, '2024-05-01', N'Lê Thị Mai', '0909123456', 'mai@gmail.com', '1994-07-02', N'789 Trần Quang Khải', 'QL01', 'TK05'),
-('NV03', '2024-03-01', 6200000, '2024-06-01', N'Nguyễn Văn Hòa', '0909234567', 'hoa@gmail.com', '1993-08-03', N'12 Nguyễn Thị Minh Khai', 'QL01', 'TK06'),
-('NV04', '2024-04-01', 6400000, '2024-07-01', N'Phạm Thị Tuyết', '0909345678', 'tuyet@gmail.com', '1992-09-04', '34 Pasteur', 'QL02', 'TK07'),
-('NV05', '2024-05-01', 6300000, '2024-08-01', N'Hoàng Văn Khánh', '0909456789', 'khanh@gmail.com', '1991-10-05', N'56 Nguyễn Trãi', 'QL02', 'TK08');
+('NV01', '2023-01-01', 10000000, N'T4 (22:00-06:00)', N'Lê Văn A', '0911000001', 'a@gmail.com', '1995-01-01', N'123 Đường A', NULL),
+('NV02', '2023-02-01', 9500000,  N'CN (07:00-11:00)', N'Trần Thị B', '0911000002', 'b@gmail.com', '1996-02-02', N'234 Đường B', NULL),
+('NV03', '2023-03-01', 11000000, N'T2 (13:00-17:00)', N'Nguyễn Văn C', '0911000003', 'c@gmail.com', '1997-03-03', N'345 Đường C', NULL),
+('NV04', '2023-04-01', 9000000,  N'T3 (17:30-21:30)', N'Lê Thị D', '0911000004', 'd@gmail.com', '1998-04-04', N'456 Đường D', NULL),
+('NV05', '2023-05-01', 10500000, N'T4 (22:00-06:00)', N'Phạm Văn E', '0911000005', 'e@gmail.com', '1999-05-05', N'567 Đường E', NULL),
+('NV06', '2023-06-01', 9700000,  N'CN (07:00-11:00)', N'Huỳnh Thị F', '0911000006', 'f@gmail.com', '1994-06-06', N'678 Đường F', NULL),
+('NV07', '2023-07-01', 10200000, N'T2 (13:00-17:00)', N'Đỗ Văn G', '0911000007', 'g@gmail.com', '1993-07-07', N'789 Đường G', NULL),
+('NV08', '2023-08-01', 9800000,  N'T3 (17:30-21:30)', N'Vũ Thị H', '0911000008', 'h@gmail.com', '1992-08-08', N'890 Đường H', NULL),
+('NV09', '2023-09-01', 10800000, N'T4 (22:00-06:00)', N'Mai Văn I', '0911000009', 'i@gmail.com', '1991-09-09', N'901 Đường I', NULL),
+('NV10', '2023-10-01', 9500000,  N'CN (07:00-11:00)', N'Phan Thị K', '0911000010', 'k@gmail.com', '1990-10-10', N'012 Đường K', NULL);
 
 -- KhachHang
 INSERT INTO KhachHang (ma, ngayDangKy, diemTichLuy, hangThanhVien, soLanMuaHang, hoTen, sdt, email, namSinh, diaChi, maNV)
