@@ -44,7 +44,7 @@ public class DangNhap_GUI extends JFrame implements ActionListener {
         // ================================ Panel phải - form đăng nhập
         Box pnlForm = Box.createVerticalBox();
         pnlForm.setPreferredSize(new Dimension(400, 600));
-        pnlForm.setBorder(BorderFactory.createEmptyBorder(180, 40, 180, 30)); // padding
+        pnlForm.setBorder(BorderFactory.createEmptyBorder(180, 40, 180, 30));
 
         // Panel nhập tên đăng nhập
         JLabel lblUserLabel = new JLabel("Tên đăng nhập:");
@@ -102,24 +102,30 @@ public class DangNhap_GUI extends JFrame implements ActionListener {
     	String user = txtUser.getText();
     	String pass = new String(txtPass.getPassword());
     	String passTemp = new String();
+    	boolean userTemp = false;
     	TaiKhoan tkTemp = new TaiKhoan();
+
     	if (user.isEmpty() || pass.isEmpty()) {
             lblError.setText("Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu!");
             return;
         }
     	
     	try {
-    		tkTemp = tk.getByTK(txtUser.getText());
-    		passTemp = tkTemp.getMatKhau();
-		} catch (SQLException e2) {
-			// TODO: handle exception
-			e2.printStackTrace();
-		}
-        
 
-        if (passTemp.equals(pass)==false) {
-            lblError.setText("Tên đăng nhập hoặc mật khẩu không đúng!");
-        } else {
+            tkTemp = tk.getByTK(user);
+            if (tkTemp != null) {
+                passTemp = tkTemp.getMatKhau();
+                userTemp = true;
+            }
+        } catch (SQLException e2) {
+            e2.printStackTrace();
+        }
+
+        if (!userTemp) {
+            lblError.setText("Sai tên đăng nhâp");
+        }else if(!passTemp.equals(pass)) {
+        	lblError.setText("Sai mật khẩu");
+        }else {
             lblError.setText("");
             
             if(tkTemp.getVaiTro().compareTo("quanly")==0) {
@@ -138,8 +144,6 @@ public class DangNhap_GUI extends JFrame implements ActionListener {
 	            	e1.printStackTrace();
             	}
         	}
-			
-            System.out.println(nhanVienHienHanh.getHoTen());
             new TrangChu_GUI();
             
             this.setVisible(false);
