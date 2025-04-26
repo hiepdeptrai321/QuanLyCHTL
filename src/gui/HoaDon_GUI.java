@@ -72,7 +72,7 @@ import entity.SanPham;
 
 public class HoaDon_GUI extends JPanel implements ActionListener {
 
-    private JPanel contentPane; 
+	private JPanel contentPane; 
     private JTabbedPane tabbedPane; 
     private JPanel panelDanhSach; 
     private JTextField txtTimKiem;
@@ -117,7 +117,6 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
     
     private SanPham_DAO sanPhamDAO;
     private KhachHang_DAO khachHangDAO;
-    private NhanVien nhanVienHienTai;
     private KhachHang khachHangHienTai;
 	private List<ChiTietHoaDon> dsChiTietHoaDonTam = new ArrayList<ChiTietHoaDon>();
 
@@ -132,30 +131,26 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
         
         setLayout(new BorderLayout());
         contentPane = new JPanel();
-        contentPane.setBorder(new EmptyBorder(5, 5, 5, 5)); // Giảm border chút
-        contentPane.setLayout(new BorderLayout(0, 0)); // JFrame dùng BorderLayout
+        contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+        contentPane.setLayout(new BorderLayout(0, 0)); 
         add(contentPane,BorderLayout.CENTER);
 
         // --- Tạo JTabbedPane ---
         tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-        contentPane.add(tabbedPane, BorderLayout.CENTER); // Thêm TabbedPane vào ContentPane
-
-        // --- Tạo Tab 1: Danh sách Hóa đơn ---
-        panelDanhSach = createDanhSachHoaDonTab(); // Gọi hàm tạo giao diện cho tab này
-        tabbedPane.addTab("Danh sách Hóa đơn", null, panelDanhSach, "Xem danh sách và chi tiết các hóa đơn đã tạo");
-
-        // --- Tạo Tab 2: Tạo Hóa đơn mới ---
-        panelTaoHoaDon = createTaoHoaDonTab(); // Gọi hàm tạo giao diện cho tab này
+        contentPane.add(tabbedPane, BorderLayout.CENTER); 
+        
+        panelTaoHoaDon = createTaoHoaDonTab();
         tabbedPane.addTab("Tạo Hóa đơn mới", null, panelTaoHoaDon, "Tạo một hóa đơn bán hàng mới");
 
-        // Load dữ liệu ban đầu cho tab danh sách
+        panelDanhSach = createDanhSachHoaDonTab(); 
+        tabbedPane.addTab("Danh sách Hóa đơn", null, panelDanhSach, "Xem danh sách và chi tiết các hóa đơn đã tạo");
+
         try {
              loadDataToTable(hoaDonDAO.getAll());
         } catch(SQLException e) {
              JOptionPane.showMessageDialog(this, "Lỗi khi tải danh sách hóa đơn ban đầu: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
              e.printStackTrace();
         }
-        // Ban đầu không chọn dòng nào thì nút Chi tiết bị mờ
         btnChiTiet.setEnabled(false);
         
     }
@@ -468,7 +463,6 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
         addListenersTaoHDTab();
         resetTaoHoaDonTab();
 
-
         // --- Listener cho model bảng chi tiết để tự cập nhật tổng tiền ---
 
         modelChiTietTaoHD.addTableModelListener(new TableModelListener() {
@@ -552,7 +546,6 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
                     }
                 }
 
-                 // Luôn cập nhật tổng kết sau khi có thay đổi (và không phải đang xử lý lồng nhau)
                  if (!updating && e.getType() != TableModelEvent.HEADER_ROW) {
                     updateSummaryPOS();
                  }
@@ -624,7 +617,7 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
      // --- Hàm thêm listeners cho các component trong Tab Tạo Hóa Đơn ---
     private void addListenersTaoHDTab() {
          btnThemSP.addActionListener(this);
-         txtMaSPEntry.addActionListener(this); // Cho phép nhấn Enter để thêm SP
+         txtMaSPEntry.addActionListener(this);
 
          btnTimKH.addActionListener(this);
          chkKhachLe.addActionListener(this);
@@ -633,13 +626,12 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
          btnThanhToan.addActionListener(this);
          btnHuyHoaDon.addActionListener(this);
 
-         // Listener cho ô nhập tiền nhận để tính tiền thối
          txtTienNhanPOS.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
             @Override public void insertUpdate(javax.swing.event.DocumentEvent e) { calculateChange(); }
             @Override public void removeUpdate(javax.swing.event.DocumentEvent e) { calculateChange(); }
             @Override public void changedUpdate(javax.swing.event.DocumentEvent e) { calculateChange(); }
          });
-         txtTienNhanPOS.addActionListener(e -> btnThanhToan.doClick()); // Nhấn Enter ở ô Tiền nhận = Thanh toán
+         txtTienNhanPOS.addActionListener(e -> btnThanhToan.doClick());
     }
 
 
@@ -751,8 +743,8 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
 
      private void handleLamMoiKhachHang() {
           resetKhachHangInfo();
-          chkKhachLe.setSelected(true); // Chọn lại khách lẻ
-          handleKhachLeCheck(); // Cập nhật trạng thái nút/ô nhập
+          chkKhachLe.setSelected(true); 
+          handleKhachLeCheck(); 
      }
 
      // Hiển thị thông tin KH đã chọn
@@ -794,7 +786,7 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
         lblGiamGiaValuePOS.setText(currencyFormat.format(giamGia));
         lblThanhTienValuePOS.setText(currencyFormat.format(thanhTien));
 
-        calculateChange(); // Tính lại tiền thối khi tổng tiền thay đổi
+        calculateChange();
     }
 
     // Tính tiền thối lại
@@ -848,12 +840,12 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
              // 3. Tạo đối tượng HoaDon
              HoaDon hoaDonMoi = new HoaDon();
              // TODO: Tạo mã hóa đơn mới (ví dụ: HD + timestamp hoặc theo quy tắc khác)
-             String maHDMoi = "HD" + System.currentTimeMillis(); // Ví dụ mã tạm
+             String maHDMoi = "HD" + System.currentTimeMillis(); 
              hoaDonMoi.setMaHD(maHDMoi);
-             hoaDonMoi.setNgayLap(new Date()); // Ngày giờ hiện tại
-             hoaDonMoi.setNv(nhanVienHienTai); // Nhân viên đang đăng nhập
-             hoaDonMoi.setKh(khachHangHienTai); // Khách hàng đang chọn (có thể null)
-             hoaDonMoi.setQuay(1); // Ví dụ quầy số 1
+             hoaDonMoi.setNgayLap(new Date()); 
+             hoaDonMoi.setNv(DangNhap_GUI.nhanVienHienHanh); 
+             hoaDonMoi.setKh(khachHangHienTai); 
+             hoaDonMoi.setQuay(1);
              // Lấy các giá trị tiền tệ đã tính
              try {
                  hoaDonMoi.setTongTien(currencyFormat.parse(lblTongTienHangValuePOS.getText()).doubleValue());
@@ -862,7 +854,7 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
                  hoaDonMoi.setTienNhan(tienNhan);
                  hoaDonMoi.setTienThoi(currencyFormat.parse(lblTienThoiValuePOS.getText()).doubleValue());
 
-             } catch (Exception e) { /* Bỏ qua lỗi parse ở đây vì đã kiểm tra trước */ }
+             } catch (Exception e) {}
 
              // Tính tổng số lượng SP
               int tongSoLuong = 0;
@@ -878,16 +870,14 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
                   String maSP = modelChiTietTaoHD.getValueAt(i, 1).toString();
                   int soLuong = (int) modelChiTietTaoHD.getValueAt(i, 3);
                   double donGia = (double) modelChiTietTaoHD.getValueAt(i, 4);
-                  // Tìm lại đối tượng SanPham (hoặc lấy từ dsChiTietHoaDonTam nếu đã lưu)
-                   SanPham spTrongBang = null;
-                   try { spTrongBang = sanPhamDAO.getById(maSP); } catch (SQLException ex) {} // Bỏ qua lỗi nếu cần
+                  SanPham spTrongBang = null;
+                  try { spTrongBang = sanPhamDAO.getById(maSP); } catch (SQLException ex) {}
 
                   if(spTrongBang != null) {
                        ChiTietHoaDon cthd = new ChiTietHoaDon(soLuong, donGia, hoaDonMoi.getMaHD(), spTrongBang.getMaSP(), null);
                        dsChiTietFinal.add(cthd);
                   }
              }
-
 
              // 5. Lưu vào cơ sở dữ liệu (Cần transaction)
              boolean success = false;
@@ -901,8 +891,7 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
              // 6. Xử lý kết quả
              if (success) {
                   JOptionPane.showMessageDialog(panelTaoHoaDon, "Thanh toán và lưu hóa đơn thành công!\nMã HĐ: " + maHDMoi, "Thành công", JOptionPane.INFORMATION_MESSAGE);
-                  // TODO: Có thể thêm chức năng in hóa đơn ở đây
-                  resetTaoHoaDonTab(); // Reset lại tab để tạo hóa đơn mới
+                  resetTaoHoaDonTab();
              } else {
                   JOptionPane.showMessageDialog(panelTaoHoaDon, "Lưu hóa đơn thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
              }

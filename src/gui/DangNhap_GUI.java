@@ -3,7 +3,10 @@ package gui;
 import javax.swing.*;
 
 import connectDB.ConnectDB;
+import dao.NguoiQuanLy_DAO;
+import dao.NhanVien_DAO;
 import dao.TaiKhoan_DAO;
+import entity.NhanVien;
 import entity.TaiKhoan;
 
 import java.awt.*;
@@ -17,12 +20,17 @@ public class DangNhap_GUI extends JFrame implements ActionListener {
     private JPasswordField txtPass;
     private JLabel lblError;
 	private TaiKhoan_DAO tk;
+	private NhanVien_DAO nv;
+	private NguoiQuanLy_DAO ql;
+	public static NhanVien nhanVienHienHanh;
 	
 
     public DangNhap_GUI() {
         super("Đăng nhập hệ thống");
         ConnectDB.getInstance().connect();
-        tk = new TaiKhoan_DAO(ConnectDB.getInstance().getConnection());
+        tk = new TaiKhoan_DAO(ConnectDB.getConnection());
+        ql = new NguoiQuanLy_DAO(ConnectDB.getConnection());
+		nv = new NhanVien_DAO(ConnectDB.getConnection());
         setSize(1000, 600);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -36,7 +44,7 @@ public class DangNhap_GUI extends JFrame implements ActionListener {
         // ================================ Panel phải - form đăng nhập
         Box pnlForm = Box.createVerticalBox();
         pnlForm.setPreferredSize(new Dimension(400, 600));
-        pnlForm.setBorder(BorderFactory.createEmptyBorder(180, 40, 180, 30)); // padding
+        pnlForm.setBorder(BorderFactory.createEmptyBorder(180, 40, 180, 30));
 
         // Panel nhập tên đăng nhập
         JLabel lblUserLabel = new JLabel("Tên đăng nhập:");
@@ -51,6 +59,7 @@ public class DangNhap_GUI extends JFrame implements ActionListener {
         JPanel pnl2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
         pnl2.add(lblPassLabel);
         pnl2.add(txtPass);
+        txtPass.addActionListener(this);
 
         // Nút đăng nhập
         JButton btnLogin = new JButton("Đăng nhập");
@@ -94,25 +103,49 @@ public class DangNhap_GUI extends JFrame implements ActionListener {
     	String user = txtUser.getText();
     	String pass = new String(txtPass.getPassword());
     	String passTemp = new String();
+    	boolean userTemp = false;
+    	TaiKhoan tkTemp = new TaiKhoan();
+
     	if (user.isEmpty() || pass.isEmpty()) {
             lblError.setText("Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu!");
             return;
         }
     	
     	try {
-    		TaiKhoan tkTemp = tk.getByTK(txtUser.getText());
-    		passTemp = tkTemp.getMatKhau();
-		} catch (SQLException e2) {
-			// TODO: handle exception
-			e2.printStackTrace();
-		}
-        
 
-        if (passTemp.equals(pass)==false) {
-            lblError.setText("Tên đăng nhập hoặc mật khẩu không đúng!");
-        } else {
+            tkTemp = tk.getByTK(user);
+            if (tkTemp != null) {
+                passTemp = tkTemp.getMatKhau();
+                userTemp = true;
+            }
+        } catch (SQLException e2) {
+            e2.printStackTrace();
+        }
+
+        if (!userTemp) {
+            lblError.setText("Sai tên đăng nhâp");
+        }else if(!passTemp.equals(pass)) {
+        	lblError.setText("Sai mật khẩu");
+        }else {
             lblError.setText("");
-            TrangChu_GUI trangChu = new TrangChu_GUI();
+            
+            if(tkTemp.getVaiTro().compareTo("quanly")==0) {
+            	try {
+            		nhanVienHienHanh = ql.getByTK(tkTemp.getMaTK());
+            	} catch (SQLException e1) {
+	            	// TODO Auto-generated catch block
+	            	e1.printStackTrace();
+            	}
+            }
+        	else {
+            	try {
+            		nhanVienHienHanh = nv.getByTK(tkTemp.getMaTK());
+            	} catch (SQLException e1) {
+	            	// TODO Auto-generated catch block
+	            	e1.printStackTrace();
+            	}
+        	}
+            new TrangChu_GUI();
             
             this.setVisible(false);
         }

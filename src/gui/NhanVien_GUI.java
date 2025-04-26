@@ -1,150 +1,160 @@
 package gui;
 
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import com.toedter.calendar.JDateChooser;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.Image;
+import connectDB.ConnectDB;
+import dao.NhanVien_DAO;
+import entity.NhanVien;
+
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import javax.swing.Box;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-import javax.swing.border.MatteBorder;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
-public class NhanVien_GUI extends JPanel implements ActionListener,MouseListener{
+public class NhanVien_GUI extends JPanel implements ActionListener{
+    private JTable table;
+    private DefaultTableModel model;
+    private JDateChooser dateNamSinh;
+    private JDateChooser dateNgayVaoLam;
+    private JDateChooser dateCaLam;
+    private JButton btnThem;
+    private JButton btnSua;
+    private JButton btnXoa;
+    private JButton btnLamMoi;
+    private JButton btnTim;
+    private JTextField txtTim;
+    private JTextField txtMaNV;
+    private JTextField txtHoTen;
+    private JTextField txtSDT;
+    private JTextField txtEmail;
+    private JTextField txtDiaChi;
+    private JTextField txtLuong;
+    private JTextField txtMaTK;
+    private NhanVien_DAO nhanVien_DAO = null;
+    
+    public NhanVien_GUI() {
+    	ConnectDB.getInstance().connect();
+    	nhanVien_DAO =  new NhanVien_DAO(ConnectDB.getConnection());
+        setLayout(new BorderLayout(10, 10));
 
+// 		================================================================================= Panel Trái
+        JPanel pnlL = new JPanel(new BorderLayout(5, 5));
+        JPanel searchPanel = new JPanel(new BorderLayout(5, 5));
+        txtTim = new JTextField();
+        btnTim = new JButton("Tìm");
+        searchPanel.add(txtTim, BorderLayout.CENTER);
+        searchPanel.add(btnTim, BorderLayout.EAST);
 
-	private JButton btnKH;
-	private JButton btnHD;
-	private JPanel pnlC;
+        String[] columns = {"Mã", "Họ tên", "SĐT", "Email", "Ngày sinh", "Địa chỉ", "Ngày vào làm", "Lương", "Ca", "Mã NQL", "Mã TK"};
+        model = new DefaultTableModel(columns, 0);
+        table = new JTable(model);
+        JScrollPane scrollPane = new JScrollPane(table);
 
-	public NhanVien_GUI() {
-		super();
-//		======================================================================================== Pannel North
-		setLayout(new BorderLayout());
-		JPanel pnlN = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		JLabel lblTitle = new JLabel("Chức năng nhân viên");
-		Font fTitle = new Font("TimesRoman",Font.BOLD,20);
-		lblTitle.setForeground(Color.decode("#FF3366"));
-		lblTitle.setFont(fTitle);
-		pnlN.add(lblTitle);
-		
-//		======================================================================================== Pannel West
-		Box pnlW = Box.createVerticalBox();
-		Dimension btnSize = new Dimension(200, 50);
-		
-//		button khách hàng
-		ImageIcon iconKH = new ImageIcon(getClass().getResource("/148899.png"));
-	    Image imgKH = iconKH.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
-		btnKH = new JButton("Khách hàng", new ImageIcon(imgKH));
-		btnKH.setBorderPainted(false);
-		btnKH.setContentAreaFilled(false);
-		btnKH.setFocusPainted(false);
-		btnKH.setOpaque(true);
-		btnKH.setPreferredSize(btnSize);
-		btnKH.setMaximumSize(btnSize);
-		btnKH.setHorizontalAlignment(SwingConstants.LEFT);
-		btnKH.setIconTextGap(10);
-	    
-//		button Hóa đơn
-	    ImageIcon iconSP = new ImageIcon(getClass().getResource("/127907.png"));
-	    Image imgSP = iconSP.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
-	    btnHD = new JButton("Hóa đơn", new ImageIcon(imgSP));
-	    btnHD.setBorderPainted(false);
-	    btnHD.setContentAreaFilled(false);
-	    btnHD.setFocusPainted(false);
-	    btnHD.setOpaque(true);
-	    btnHD.setPreferredSize(btnSize);
-		btnHD.setMaximumSize(btnSize);
-		btnHD.setHorizontalAlignment(SwingConstants.LEFT);
-		btnHD.setIconTextGap(10);
-	    
+        pnlL.add(searchPanel, BorderLayout.NORTH);
+        pnlL.add(scrollPane, BorderLayout.CENTER);
+        pnlL.setPreferredSize(new Dimension(900, 0));
 
-		pnlW.add(btnKH);
-		pnlW.add(btnHD);
-		
-		btnKH.addActionListener(this);
-		btnHD.addActionListener(this);
-		
-		btnKH.addMouseListener(this);
-		btnHD.addMouseListener(this);
-//		======================================================================================== pannel Center
-		pnlC = new JPanel(new BorderLayout());
-		
-//		thêm vào pannel chính
-		add(pnlN,BorderLayout.NORTH);
-		add(pnlW,BorderLayout.WEST);
-		add(pnlC,BorderLayout.CENTER);
-		
-		pnlC.add(new HoaDon_GUI());
-	}
-//	======================================================================================== mouse listener
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+// 		================================================================================= Panel Phải
+        Box pnlR = Box.createVerticalBox();
+        pnlR.setBorder(BorderFactory.createCompoundBorder(
+        	    BorderFactory.createTitledBorder("Thông tin chi tiết nhân viên"),
+        	    BorderFactory.createEmptyBorder(10, 5, 200, 5)
+        ));
 
-	@Override
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+        // Form thông tin chi tiết
+        pnlR.add(createFormRow("Mã NV:", txtMaNV = new JTextField()));
+        pnlR.add(createFormRow("Họ tên:", txtHoTen = new JTextField()));
+        pnlR.add(createFormRow("SĐT:", txtSDT = new JTextField()));
+        pnlR.add(createFormRow("Email:", txtEmail = new JTextField()));
+        pnlR.add(createFormRow("Ngày sinh:", dateNamSinh = new JDateChooser()));
+        pnlR.add(createFormRow("Địa chỉ:", txtDiaChi = new JTextField()));
+        pnlR.add(createFormRow("Ngày vào làm:", dateNgayVaoLam = new JDateChooser()));
+        pnlR.add(createFormRow("Lương:", txtLuong = new JTextField()));
+        pnlR.add(createFormRow("Ca:", dateCaLam = new JDateChooser()));
+        pnlR.add(createFormRow("Mã TK:", txtMaTK = new JTextField()));
+        // Button Panel
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 5));
+        btnThem = new JButton("Thêm");
+        btnSua = new JButton("Sửa");
+        btnXoa = new JButton("Xóa");
+        btnLamMoi = new JButton("Làm mới");
 
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+        buttonPanel.add(btnThem);
+        buttonPanel.add(btnSua);
+        buttonPanel.add(btnXoa);
+        buttonPanel.add(btnLamMoi);
+        
 
-	@Override
-	public void mouseEntered(MouseEvent e) {
-	    Object o = e.getSource();
+        pnlR.add(buttonPanel);
 
-	    if (o == btnKH) {
-	    	btnKH.setOpaque(true);
-	    	btnKH.setBackground(Color.decode("#FF6699"));
-	    } else if (o == btnHD) {
-	    	btnHD.setOpaque(true);
-	    	btnHD.setBackground(Color.decode("#FF6699"));
-	    }
-	}
+//      ================================================================================= thêm pannel
+        add(pnlL, BorderLayout.WEST);
+        add(pnlR, BorderLayout.CENTER);
+        LoadData();
+    }
 
-	@Override
-	public void mouseExited(MouseEvent e) {
-		Object o = e.getSource();
-
-	    if (o == btnKH) {
-	    	btnKH.setOpaque(true);
-	    	btnKH.setBackground(null);
-	    } else if (o == btnHD) {
-	    	btnHD.setOpaque(true);
-	    	btnHD.setBackground(null);
-	    }
-	}
-//	======================================================================================== actionPerformed
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		Object o = e.getSource();
-		if(o.equals(btnKH)) {
-			pnlC.removeAll();
-//			pnlC.add(KH());
-			pnlC.revalidate();
-	        pnlC.repaint(); 
-		}else if(o.equals(btnHD)) {
-			pnlC.removeAll();
-			pnlC.add(new HoaDon_GUI());
-			pnlC.revalidate();
-	        pnlC.repaint(); 
+		if(o.equals(btnThem)) {
+			
 		}
 	}
+	
+//  ================================================================================= methods
+//	tạo form cho dòng nhập
+	private JPanel createFormRow(String label, JComponent component) {
+        JPanel panel = new JPanel(new FlowLayout());
+        JLabel lbl = new JLabel(label);
+        lbl.setPreferredSize(new Dimension(100, 20));
+        component.setPreferredSize(new Dimension(300, 25));
+        panel.add(lbl);
+        panel.add(component);
+        return panel;
+    }
+    
+//	thêm dữ liệu vào bảng
+    private void LoadData() {
+    	List<NhanVien> dsNV = new ArrayList<NhanVien>();
+    	try {
+    		dsNV = nhanVien_DAO.getAll();
+		} catch (SQLException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+    	for(NhanVien x:dsNV) {
+    		String[] s = {x.getMa(),x.getHoTen(),x.getSdt(),x.getEmail(),String.valueOf(x.getNamSinh()),String.valueOf(x.getDiaChi()),String.valueOf(x.getNgayVaoLam()),String.valueOf(x.getLuong()),String.valueOf(x.getCaLam()),x.getMaNQL(),x.getMaTK()};
+    		model.addRow(s);
+    	}
+    }
+    
+//  kiểm tra data
+    private void ValidData() {
+    	if (txtMaNV.getText().trim().isEmpty()) {
+    	    JOptionPane.showMessageDialog(this, "Phải điền mã nhân viên");
+    	} else if (txtHoTen.getText().trim().isEmpty()) {
+    	    JOptionPane.showMessageDialog(this, "Phải điền họ tên");
+    	} else if (txtSDT.getText().trim().isEmpty()) {
+    	    JOptionPane.showMessageDialog(this, "Phải điền số điện thoại");
+    	} else if (txtEmail.getText().trim().isEmpty()) {
+    	    JOptionPane.showMessageDialog(this, "Phải điền email");
+    	} else if (dateNamSinh.getDate() == null) {
+    	    JOptionPane.showMessageDialog(this, "Phải chọn năm sinh");
+    	} else if (txtDiaChi.getText().trim().isEmpty()) {
+    	    JOptionPane.showMessageDialog(this, "Phải điền địa chỉ");
+    	} else if (dateNgayVaoLam.getDate() == null) {
+    	    JOptionPane.showMessageDialog(this, "Phải chọn ngày vào làm");
+    	} else if (txtLuong.getText().trim().isEmpty()) {
+    	    JOptionPane.showMessageDialog(this, "Phải điền lương");
+    	} 
+//    	else if (cboCaLam.getSelectedItem() == null || cboCaLam.getSelectedItem().toString().trim().isEmpty()) {
+//    	    JOptionPane.showMessageDialog(this, "Phải chọn ca làm");
+//    	} 
+    }
 }
+

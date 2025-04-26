@@ -270,7 +270,10 @@ public class TrangChu_GUI extends JFrame implements MouseListener,ActionListener
 		
 		if(o == btnNV) {
 			pnlC.removeAll();
-//			pnlC.add(new HoaDon_GUI(),BorderLayout.CENTER);
+			JPanel pnlTemp = new JPanel(new BorderLayout());
+			pnlTemp.setBorder(BorderFactory.createEmptyBorder(11,11,11,11));
+			pnlTemp.add(new NhanVien_GUI(),BorderLayout.CENTER);
+			pnlC.add(pnlTemp,BorderLayout.CENTER);
 			pnlC.revalidate();
 	        pnlC.repaint(); 
 		}else if(o == btnKM) {
@@ -301,5 +304,7 @@ public class TrangChu_GUI extends JFrame implements MouseListener,ActionListener
 	        pnlC.repaint(); 
 		}
 	}
-
+	public static void main(String[] args) {
+		new TrangChu_GUI();
+	}
 }
