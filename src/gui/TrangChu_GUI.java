@@ -74,7 +74,6 @@ public class TrangChu_GUI extends JFrame implements MouseListener,ActionListener
 	    Box pnlW = Box.createVerticalBox();
 	    pnlW.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.BLACK));
 	    Dimension btnSize = new Dimension(200, 50);
-	    
 //		button quản lý nhân viên
 	    ImageIcon iconNV = new ImageIcon(getClass().getResource("/148960.png"));
 	    Image imgNV = iconNV.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
@@ -198,6 +197,12 @@ public class TrangChu_GUI extends JFrame implements MouseListener,ActionListener
 		add(pnlAll);
 //		pnlC.add(new NhanVien_GUI(), BorderLayout.CENTER);
 		setVisible(true);
+		
+		if(!DangNhap_GUI.quanLyCheck) {
+			btnNV.setVisible(false);
+			btnKM.setVisible(false);
+			btnSP.setVisible(false);
+		}
 	}
 	
 //	======================================================================================== mouse clicked

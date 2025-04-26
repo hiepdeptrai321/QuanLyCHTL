@@ -6,13 +6,11 @@ public class NguoiQuanLy extends NhanVien{
     private String capBac;
     private double phuCap;
     private String maTK;
-	public NguoiQuanLy(String ma, String hoTen, String sdt, String email, Date namSinh, String diaChi, String capBac,
-			double phuCap, String maTK) {
-		super(ma, hoTen, sdt, email, namSinh, diaChi, namSinh, phuCap, namSinh, maTK, maTK);
-		this.capBac = capBac;
-		this.phuCap = phuCap;
-		this.maTK = maTK;
-	}
+    public NguoiQuanLy(String ma, String hoTen, String sdt, String email, Date namSinh, String diaChi, Date ngayVaoLam, double luong, String caLam, String maNQL, String maTK, String capBac, double phuCap) {
+    		super(ma, hoTen, sdt, email, namSinh, diaChi, ngayVaoLam, luong, caLam, maNQL, maTK);
+    		this.capBac = capBac;
+    		this.phuCap = phuCap;
+    }
 	public NguoiQuanLy() {
 		super();
 	}
