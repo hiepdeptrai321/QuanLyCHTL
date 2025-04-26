@@ -1,5 +1,12 @@
 ﻿create database QuanLyCHTL
 use QuanLyCHTL
+
+--drop database
+use master
+ALTER DATABASE QuanLyCHTL
+SET SINGLE_USER
+WITH ROLLBACK IMMEDIATE;
+GO
 drop database QuanLyCHTL
 
 -- -----------------------------
@@ -66,10 +73,11 @@ CREATE TABLE SanPham (
 
 CREATE TABLE KhuyenMai (
     maKM NVARCHAR(50) PRIMARY KEY,
+	tenKM NVARCHAR(50),
     giaTriGiam FLOAT,
     ngayBatDau DATE,
     ngayKetThuc DATE,
-    moTa NVARCHAR(255), -- Nên là NVARCHAR(255)
+    moTa NVARCHAR(255),
     maSP NVARCHAR(50),
     maNQL NVARCHAR(50),
     FOREIGN KEY (maSP) REFERENCES SanPham(maSP),
@@ -135,6 +143,44 @@ CREATE TABLE ChiTietHoaDon (
 );
 GO
 
+
+CREATE TRIGGER trg_AfterInsertNguoiQuanLy_AddNhanVien
+ON dbo.NguoiQuanLy
+AFTER INSERT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    INSERT INTO dbo.NhanVien (
+        ma,
+        ngayVaoLam,
+        luong,
+        caLam,
+        hoTen,
+        sdt,
+        email,
+        namSinh,
+        diaChi,
+        maNQL,
+        maTK
+    )
+    SELECT
+        i.ma,
+        CONVERT(DATE, GETDATE()), -- Lấy ngày hiện tại làm Ngày vào làm
+        0,                        -- Lương mặc định là 0
+        NULL,                     -- Ca làm mặc định là NULL
+        i.hoTen,
+        i.sdt,
+        i.email,
+        i.namSinh,
+        i.diaChi,
+        NULL,                     -- Mã người quản lý mặc định là NULL
+        i.maTK
+    FROM
+        inserted i;
+END;
+GO
+
 -- =============================
 --Chèn dữ liệu
 -- =============================
@@ -189,11 +235,17 @@ VALUES
 ('TK05', 'nhanvien01', 'nv123', 'nhanvien'),
 ('TK06', 'nhanvien03', 'nv631', 'nhanvien'),
 ('TK07', 'nhanvien04', 'nv333', 'nhanvien'),
-('TK08', 'nhanvien05', 'nv369', 'nhanvien');
+('TK08', 'nhanvien05', 'nv369', 'nhanvien'),
+('TK09', 'hiep', 'nv369', 'quanly'),
+('TK10', 'an', 'an123', 'quanly'),
+('TK11', 'cong', 'cong123', 'quanly');
 
 -- NguoiQuanLy
 INSERT INTO NguoiQuanLy (ma, capBac, phuCap, hoTen, sdt, email, namSinh, diaChi, maTK)
 VALUES
+('QL03', 'A1', 1000000, N'Đỗ Phú Hiệp', '0912345678', 'an@gmail.com', '2005-01-01', N'1 Lê Lợi', 'TK02'),
+('QL04', 'A1', 1000000, N'Hoàng Phước Thành Công', '0912345678', 'an@gmail.com', '2005-01-01', N'1 Lê Lợi', 'TK02'),
+('QL05', 'A1', 1000000, N'Đàm Thái An', '0912345678', 'an@gmail.com', '2005-01-01', N'1 Lê Lợi', 'TK02'),
 ('QL01', 'A1', 1000000, N'Nguyễn Văn An', '0912345678', 'an@gmail.com', '2005-01-01', N'1 Lê Lợi', 'TK02'),
 ('QL02', 'A2', 1100000, N'Trần Thị Bình', '0912345679', 'binh@gmail.com', '1990-02-02', N'2 Nguyễn Huệ', 'TK03');
 
@@ -212,18 +264,18 @@ VALUES
 ('SP10', N'Sữa NutiFood 180ml', 8500, 6500, 'NH10', 'LSP04', 'NCC09', 'QL02');
 
 -- KhuyenMai
-INSERT INTO KhuyenMai (maKM, giaTriGiam, ngayBatDau, ngayKetThuc, moTa, maSP, maNQL)
+INSERT INTO KhuyenMai (maKM, tenKM, giaTriGiam, ngayBatDau, ngayKetThuc, moTa, maSP, maNQL)
 VALUES
-('KM01', 10, '2025-05-01', '2025-05-10', N'Giảm giá mùa hè', 'SP01', 'QL01'),
-('KM02', 5, '2025-06-01', '2025-06-15', N'Ưu đãi hè', 'SP02', 'QL01'),
-('KM03', 15, '2025-07-01', '2025-07-10', N'Giảm sốc', 'SP03', 'QL02'),
-('KM04', 20, '2025-08-01', '2025-08-05', 'Flash Sale', 'SP04', 'QL02'),
-('KM05', 8, '2025-09-01', '2025-09-07', 'Back to School', 'SP05', 'QL01'),
-('KM06', 12, '2025-10-01', '2025-10-10', N'Mừng sinh nhật', 'SP06', 'QL02'),
-('KM07', 7, '2025-11-01', '2025-11-15', N'Sale tháng 11', 'SP07', 'QL02'),
-('KM08', 18, '2025-12-01', '2025-12-25', 'Xmas Sale', 'SP08', 'QL02'),
-('KM09', 9, '2026-01-01', '2026-01-10', N'Tết Sale', 'SP09', 'QL01'),
-('KM10', 6, '2026-02-01', '2026-02-14', 'Valentine Deal', 'SP10', 'QL01');
+('KM01', N'Giảm giá mùa hè', 10, '2025-05-01', '2025-05-10', N'Chương trình giảm giá đặc biệt chào hè.', 'SP01', 'QL01'),
+('KM02', N'Ưu đãi hè', 5, '2025-06-01', '2025-06-15', N'Ưu đãi hấp dẫn trong mùa hè.', 'SP02', 'QL01'),
+('KM03', N'Giảm sốc', 15, '2025-07-01', '2025-07-10', N'Giảm giá cực sốc trong thời gian ngắn.', 'SP03', 'QL02'),
+('KM04', N'Flash Sale', 20, '2025-08-01', '2025-08-05', N'Khuyến mãi chớp nhoáng với mức giảm giá lớn, chỉ diễn ra trong 5 ngày.', 'SP04', 'QL02'),
+('KM05', N'Back to School', 8, '2025-09-01', '2025-09-07', N'Ưu đãi đặc biệt mừng mùa tựu trường.', 'SP05', 'QL01'),
+('KM06', N'Mừng sinh nhật', 12, '2025-10-01', '2025-10-10', N'Chương trình khuyến mãi đặc biệt mừng sinh nhật.', 'SP06', 'QL02'),
+('KM07', N'Sale tháng 11', 7, '2025-11-01', '2025-11-15', N'Đợt giảm giá lớn trong tháng 11.', 'SP07', 'QL02'),
+('KM08', N'Xmas Sale', 18, '2025-12-01', '2025-12-25', N'Khuyến mãi đặc biệt mừng Giáng sinh, giảm giá mạnh.', 'SP08', 'QL02'),
+('KM09', N'Tết Sale', 9, '2026-01-01', '2026-01-10', N'Giảm giá mừng Tết Nguyên Đán.', 'SP09', 'QL01'),
+('KM10', N'Valentine Deal', 6, '2026-02-01', '2026-02-14', N'Ưu đãi ngọt ngào dành cho ngày Lễ Tình Nhân Valentine.', 'SP10', 'QL01');
 
 -- NhanVien
 INSERT INTO NhanVien (ma, ngayVaoLam, luong, caLam, hoTen, sdt, email, namSinh, diaChi, maNQL, maTK)
@@ -286,4 +338,4 @@ select * from [dbo].[NhaCungCap]
 select * from [dbo].[NhanHang]
 select * from [dbo].[NhanVien]
 select * from [dbo].[SanPham]
-select * from [dbo].[TaiKhoan]
+select * from [dbo].[TaiKhoan] 
