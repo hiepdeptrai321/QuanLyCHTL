@@ -229,25 +229,27 @@ VALUES
 INSERT INTO TaiKhoan (maTK, tenDN, matKhau, vaiTro)
 VALUES
 ('TK01', 'admin', 'admin123', 'admin'),
-('TK02', 'qly2', 'ql456', 'quanly'),
-('TK03', 'qly1', 'ql123', 'quanly'),
+('TK102', 'qly2', 'ql456', 'quanly'),
+('TK103', 'qly1', 'ql123', 'quanly'),
 ('TK04', 'nhanvien02', 'nv456', 'nhanvien'),
 ('TK05', 'nhanvien01', 'nv123', 'nhanvien'),
 ('TK06', 'nhanvien03', 'nv631', 'nhanvien'),
 ('TK07', 'nhanvien04', 'nv333', 'nhanvien'),
 ('TK08', 'nhanvien05', 'nv369', 'nhanvien'),
-('TK09', 'hiep', 'nv369', 'quanly'),
-('TK10', 'an', 'an123', 'quanly'),
-('TK11', 'cong', 'cong123', 'quanly');
+('TK104', 'hiep', 'hiep123', 'quanly'),
+('TK105', 'cong', 'cong123', 'quanly'),
+('TK106', 'an', 'an123', 'quanly');
+
+
 
 -- NguoiQuanLy
 INSERT INTO NguoiQuanLy (ma, capBac, phuCap, hoTen, sdt, email, namSinh, diaChi, maTK)
 VALUES
-('QL03', 'A1', 1000000, N'Đỗ Phú Hiệp', '0912345678', 'an@gmail.com', '2005-01-01', N'1 Lê Lợi', 'TK02'),
-('QL04', 'A1', 1000000, N'Hoàng Phước Thành Công', '0912345678', 'an@gmail.com', '2005-01-01', N'1 Lê Lợi', 'TK02'),
-('QL05', 'A1', 1000000, N'Đàm Thái An', '0912345678', 'an@gmail.com', '2005-01-01', N'1 Lê Lợi', 'TK02'),
-('QL01', 'A1', 1000000, N'Nguyễn Văn An', '0912345678', 'an@gmail.com', '2005-01-01', N'1 Lê Lợi', 'TK02'),
-('QL02', 'A2', 1100000, N'Trần Thị Bình', '0912345679', 'binh@gmail.com', '1990-02-02', N'2 Nguyễn Huệ', 'TK03');
+('QL03', 'A1', 1000000, N'Đỗ Phú Hiệp', '0912345678', 'an@gmail.com', '2005-01-01', N'1 Lê Lợi', 'TK104'),
+('QL04', 'A1', 1000000, N'Hoàng Phước Thành Công', '0912345678', 'an@gmail.com', '2005-01-01', N'1 Lê Lợi', 'TK105'),
+('QL05', 'A1', 1000000, N'Đàm Thái An', '0912345678', 'an@gmail.com', '2005-01-01', N'1 Lê Lợi', 'TK106'),
+('QL01', 'A1', 1000000, N'Nguyễn Văn An', '0912345678', 'an@gmail.com', '2005-01-01', N'1 Lê Lợi', 'TK102'),
+('QL02', 'A2', 1100000, N'Trần Thị Bình', '0912345679', 'binh@gmail.com', '1990-02-02', N'2 Nguyễn Huệ', 'TK103');
 
 -- SanPham
 INSERT INTO SanPham (maSP, tenSP, giaBan, giaGoc, maNH, maLoai, maNCC, maNQL)
