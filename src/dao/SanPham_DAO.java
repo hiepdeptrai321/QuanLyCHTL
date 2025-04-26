@@ -92,4 +92,17 @@ public class SanPham_DAO {
         }
         return list;
     }
+    public double getGiaTriGiamTheoMaSP(String maSP) throws SQLException {
+        String sql = "{? = call dbo.func_getGiaTriGiam(?)}";
+        double giaTriGiam = 0.0;
+        try (CallableStatement cs = conn.prepareCall(sql)) {
+            cs.registerOutParameter(1, Types.FLOAT);
+            cs.setString(2, maSP);
+            cs.execute();
+            giaTriGiam = cs.getDouble(1); 
+
+        }
+        return giaTriGiam;
+    }
+
 }

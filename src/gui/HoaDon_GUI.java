@@ -276,7 +276,8 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
     }
 
     // --- Hàm tạo giao diện cho Tab Tạo Hóa đơn mới ---
-    private JPanel createTaoHoaDonTab() {
+    @SuppressWarnings({ "serial", "serial", "serial" })
+	private JPanel createTaoHoaDonTab() {
         panelTaoHoaDon = new JPanel(new BorderLayout(10, 10)); // Layout chính cho tab
         panelTaoHoaDon.setBorder(new EmptyBorder(10, 10, 10, 10));
 
@@ -298,11 +299,10 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
         panelLeftPOS.add(panelInputSP, BorderLayout.NORTH);
 
         // Bảng chi tiết hóa đơn đang tạo
-        modelChiTietTaoHD = new DefaultTableModel(new String[]{"STT", "Mã SP", "Tên sản phẩm", "Số lượng", "Đơn giá", "Thành tiền", ""}, 0) {
+        modelChiTietTaoHD = new DefaultTableModel(new String[]{"STT", "Mã SP", "Tên sản phẩm", "Số lượng", "Đơn giá", "Giảm giá", "Thành tiền", ""}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                // Chỉ cho phép sửa cột "Số Lượng" (index 3) và cột "Xóa" (index 6)
-                return column == 3 || column == 6;
+                return column == 3 || column == 7;
             }
 
             @Override
@@ -311,8 +311,9 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
                     case 0: return Integer.class; 
                     case 3: return Integer.class; 
                     case 4: return Double.class;  
-                    case 5: return Double.class;  
-                    case 6: return JButton.class; 
+                    case 5: return Double.class; 
+                    case 6: return Double.class; 
+                    case 7: return JButton.class; 
                     default: return String.class;
                 }
             }
@@ -328,8 +329,8 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
 
         // --- Cấu hình cột Xóa ---
         TableColumnModel columnModelTaoHD = tableChiTietTaoHD.getColumnModel();
-        columnModelTaoHD.getColumn(6).setCellRenderer(new ButtonRenderer()); // Dùng renderer tùy chỉnh
-        columnModelTaoHD.getColumn(6).setCellEditor(new ButtonEditor(new JCheckBox())); // Dùng editor tùy chỉnh
+        columnModelTaoHD.getColumn(7).setCellRenderer(new ButtonRenderer()); // Dùng renderer tùy chỉnh
+        columnModelTaoHD.getColumn(7).setCellEditor(new ButtonEditor(new JCheckBox())); // Dùng editor tùy chỉnh
 
         // --- Định dạng các cột khác ---
         setupTaoHDTableColumns(columnModelTaoHD); 
@@ -484,10 +485,12 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
                             try {
                                 Object quantityObj = modelChiTietTaoHD.getValueAt(row, 3);
                                 Object priceObj = modelChiTietTaoHD.getValueAt(row, 4);
+                                Object giamGiaObj = modelChiTietTaoHD.getValueAt(row, 5);
 
                                 if (quantityObj instanceof Number && priceObj instanceof Number) {
                                     int quantity = ((Number) quantityObj).intValue();
                                     double unitPrice = ((Number) priceObj).doubleValue();
+                                    double giamGia = ((Number) giamGiaObj).doubleValue();
 
                                     if (quantity < 1) {
                                         quantity = 1;
@@ -502,8 +505,8 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
                                         return;
                                     }
 
-                                    double newLineTotal = quantity * unitPrice;
-                                    modelChiTietTaoHD.setValueAt(newLineTotal, row, 5); // Cập nhật cột Thành Tiền (index 5)
+                                    double newLineTotal = quantity * (unitPrice - giamGia);
+                                    modelChiTietTaoHD.setValueAt(newLineTotal, row, 6);
 
                                      if(row < dsChiTietHoaDonTam.size()) {
                                         String maSP_Check = modelChiTietTaoHD.getValueAt(row, 1).toString();
@@ -600,18 +603,20 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
          };
 
 
-        columnModel.getColumn(0).setPreferredWidth(30); 
+        columnModel.getColumn(0).setPreferredWidth(35); 
         columnModel.getColumn(0).setCellRenderer(centerRenderer);
         columnModel.getColumn(1).setPreferredWidth(80); 
         columnModel.getColumn(1).setCellRenderer(centerRenderer);
-        columnModel.getColumn(2).setPreferredWidth(250); 
+        columnModel.getColumn(2).setPreferredWidth(220); 
         columnModel.getColumn(3).setPreferredWidth(70);  
-        columnModel.getColumn(3).setCellRenderer(centerRenderer); 
+        columnModel.getColumn(3).setCellRenderer(rightRenderer); 
         columnModel.getColumn(4).setPreferredWidth(100); 
         columnModel.getColumn(4).setCellRenderer(currencyRenderer);
         columnModel.getColumn(5).setPreferredWidth(120); 
         columnModel.getColumn(5).setCellRenderer(currencyRenderer);
-        columnModel.getColumn(6).setPreferredWidth(30);
+        columnModel.getColumn(6).setPreferredWidth(120); 
+        columnModel.getColumn(6).setCellRenderer(currencyRenderer);
+        columnModel.getColumn(7).setPreferredWidth(20);
     }
 
      // --- Hàm thêm listeners cho các component trong Tab Tạo Hóa Đơn ---
@@ -663,7 +668,7 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
                     modelChiTietTaoHD.setValueAt(currentQuantity + 1, i, 3); // Tăng số lượng
                     // Cập nhật thành tiền cho dòng đó (TableModelListener sẽ tự động gọi updateSummary)
                      double donGia = (double) modelChiTietTaoHD.getValueAt(i, 4);
-                     modelChiTietTaoHD.setValueAt((currentQuantity + 1) * donGia, i, 5);
+                     modelChiTietTaoHD.setValueAt((currentQuantity + 1) * donGia, i, 7);
                     found = true;
                     break;
                 }
@@ -672,16 +677,18 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
             if (!found) {
                 // Chưa có -> Thêm dòng mới
                  int stt = modelChiTietTaoHD.getRowCount() + 1;
-                 double donGia = sp.getGiaBan(); // Lấy giá bán từ sản phẩm
-                 double thanhTien = 1 * donGia; // Số lượng ban đầu là 1
+                 double donGia = sp.getGiaBan(); 
+                 double giamGia = sanPhamDAO.getGiaTriGiamTheoMaSP(sp.getMaSP())/100 * donGia;
+                 double thanhTien = 1 * donGia - giamGia; 
                  modelChiTietTaoHD.addRow(new Object[]{
                          stt,
                          sp.getMaSP(),
                          sp.getTenSP(),
-                         1, // Số lượng ban đầu
+                         1,
                          donGia,
+                         giamGia,
                          thanhTien,
-                         "Xóa" // Text hiển thị cho nút (không quan trọng lắm)
+                         "X" // Text hiển thị cho nút (không quan trọng lắm)
                  });
                  // Thêm vào danh sách tạm
                  ChiTietHoaDon cthd = new ChiTietHoaDon(0, donGia, null, sp.getMaSP(), null);
@@ -772,15 +779,24 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
         double tongTienHang = 0;
         for (int i = 0; i < modelChiTietTaoHD.getRowCount(); i++) {
             // Lấy giá trị Thành tiền từ cột 5
-             Object thanhTienValue = modelChiTietTaoHD.getValueAt(i, 5);
+             Object thanhTienValue = modelChiTietTaoHD.getValueAt(i, 6);
              if (thanhTienValue instanceof Number) {
                  tongTienHang += ((Number) thanhTienValue).doubleValue();
              }
         }
 
-        // TODO: Xử lý giảm giá khuyến mãi (phức tạp hơn, cần logic chọn KM)
-        double giamGia = 0; // Tạm thời chưa có giảm giá
-        double thanhTien = tongTienHang - giamGia;
+        double giamGia = 0; 
+        for (int i = 0; i < modelChiTietTaoHD.getRowCount(); i++) {
+             Object giamGiaValue = modelChiTietTaoHD.getValueAt(i, 5);
+             Object soLuongValue = modelChiTietTaoHD.getValueAt(i, 3);
+             if (giamGiaValue instanceof Number) {
+                 giamGia += ((Number) giamGiaValue).doubleValue() * ((Number) soLuongValue).doubleValue();;
+             }
+        }
+
+        double thanhTien = tongTienHang;
+        
+        tongTienHang = thanhTien + giamGia;
 
         lblTongTienHangValuePOS.setText(currencyFormat.format(tongTienHang));
         lblGiamGiaValuePOS.setText(currencyFormat.format(giamGia));
@@ -839,17 +855,14 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
          if (confirm == JOptionPane.YES_OPTION) {
              // 3. Tạo đối tượng HoaDon
              HoaDon hoaDonMoi = new HoaDon();
-             // TODO: Tạo mã hóa đơn mới (ví dụ: HD + timestamp hoặc theo quy tắc khác)
-             String maHDMoi = "HD" + System.currentTimeMillis(); 
+             String maHDMoi = "HD" + (System.currentTimeMillis()%10000); 
              hoaDonMoi.setMaHD(maHDMoi);
              hoaDonMoi.setNgayLap(new Date()); 
              hoaDonMoi.setNv(DangNhap_GUI.nhanVienHienHanh); 
              hoaDonMoi.setKh(khachHangHienTai); 
              hoaDonMoi.setQuay(1);
-             // Lấy các giá trị tiền tệ đã tính
              try {
                  hoaDonMoi.setTongTien(currencyFormat.parse(lblTongTienHangValuePOS.getText()).doubleValue());
-                 // TODO: Xử lý khuyến mãi để lấy tổng tiền gốc và thành tiền đúng
                  hoaDonMoi.setThanhTien(thanhTien);
                  hoaDonMoi.setTienNhan(tienNhan);
                  hoaDonMoi.setTienThoi(currencyFormat.parse(lblTienThoiValuePOS.getText()).doubleValue());
@@ -874,7 +887,7 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
                   try { spTrongBang = sanPhamDAO.getById(maSP); } catch (SQLException ex) {}
 
                   if(spTrongBang != null) {
-                       ChiTietHoaDon cthd = new ChiTietHoaDon(soLuong, donGia, hoaDonMoi.getMaHD(), spTrongBang.getMaSP(), null);
+                       ChiTietHoaDon cthd = new ChiTietHoaDon(soLuong, donGia, hoaDonMoi.getMaHD(), spTrongBang.getMaSP(), null );
                        dsChiTietFinal.add(cthd);
                   }
              }
