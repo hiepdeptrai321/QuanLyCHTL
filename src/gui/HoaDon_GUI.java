@@ -463,7 +463,6 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
         addListenersTaoHDTab();
         resetTaoHoaDonTab();
 
-
         // --- Listener cho model bảng chi tiết để tự cập nhật tổng tiền ---
 
         modelChiTietTaoHD.addTableModelListener(new TableModelListener() {
@@ -618,7 +617,7 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
      // --- Hàm thêm listeners cho các component trong Tab Tạo Hóa Đơn ---
     private void addListenersTaoHDTab() {
          btnThemSP.addActionListener(this);
-         txtMaSPEntry.addActionListener(this); // Cho phép nhấn Enter để thêm SP
+         txtMaSPEntry.addActionListener(this);
 
          btnTimKH.addActionListener(this);
          chkKhachLe.addActionListener(this);
@@ -627,13 +626,12 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
          btnThanhToan.addActionListener(this);
          btnHuyHoaDon.addActionListener(this);
 
-         // Listener cho ô nhập tiền nhận để tính tiền thối
          txtTienNhanPOS.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
             @Override public void insertUpdate(javax.swing.event.DocumentEvent e) { calculateChange(); }
             @Override public void removeUpdate(javax.swing.event.DocumentEvent e) { calculateChange(); }
             @Override public void changedUpdate(javax.swing.event.DocumentEvent e) { calculateChange(); }
          });
-         txtTienNhanPOS.addActionListener(e -> btnThanhToan.doClick()); // Nhấn Enter ở ô Tiền nhận = Thanh toán
+         txtTienNhanPOS.addActionListener(e -> btnThanhToan.doClick());
     }
 
 
@@ -745,8 +743,8 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
 
      private void handleLamMoiKhachHang() {
           resetKhachHangInfo();
-          chkKhachLe.setSelected(true); // Chọn lại khách lẻ
-          handleKhachLeCheck(); // Cập nhật trạng thái nút/ô nhập
+          chkKhachLe.setSelected(true); 
+          handleKhachLeCheck(); 
      }
 
      // Hiển thị thông tin KH đã chọn
@@ -788,7 +786,7 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
         lblGiamGiaValuePOS.setText(currencyFormat.format(giamGia));
         lblThanhTienValuePOS.setText(currencyFormat.format(thanhTien));
 
-        calculateChange(); // Tính lại tiền thối khi tổng tiền thay đổi
+        calculateChange();
     }
 
     // Tính tiền thối lại
