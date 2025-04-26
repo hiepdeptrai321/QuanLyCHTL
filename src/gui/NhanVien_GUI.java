@@ -4,9 +4,19 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableModel;
 import com.toedter.calendar.JDateChooser;
-import java.awt.*;
 
-public class NhanVien_GUI extends JPanel {
+import connectDB.ConnectDB;
+import dao.NhanVien_DAO;
+import entity.NhanVien;
+
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class NhanVien_GUI extends JPanel implements ActionListener{
     private JTable table;
     private DefaultTableModel model;
     private JDateChooser dateNamSinh;
@@ -24,15 +34,16 @@ public class NhanVien_GUI extends JPanel {
     private JTextField txtEmail;
     private JTextField txtDiaChi;
     private JTextField txtLuong;
-    private JTextField txtMaNQL;
     private JTextField txtMaTK;
-
+    private NhanVien_DAO nhanVien_DAO = null;
+    
     public NhanVien_GUI() {
+    	ConnectDB.getInstance().connect();
+    	nhanVien_DAO =  new NhanVien_DAO(ConnectDB.getConnection());
         setLayout(new BorderLayout(10, 10));
 
-        // ============================ Panel Trái ============================
+// 		================================================================================= Panel Trái
         JPanel pnlL = new JPanel(new BorderLayout(5, 5));
-        pnlL.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         JPanel searchPanel = new JPanel(new BorderLayout(5, 5));
         txtTim = new JTextField();
         btnTim = new JButton("Tìm");
@@ -48,11 +59,11 @@ public class NhanVien_GUI extends JPanel {
         pnlL.add(scrollPane, BorderLayout.CENTER);
         pnlL.setPreferredSize(new Dimension(900, 0));
 
-        // ============================ Panel Phải ============================
+// 		================================================================================= Panel Phải
         Box pnlR = Box.createVerticalBox();
         pnlR.setBorder(BorderFactory.createCompoundBorder(
         	    BorderFactory.createTitledBorder("Thông tin chi tiết nhân viên"),
-        	    BorderFactory.createEmptyBorder(10, 10, 200, 10)
+        	    BorderFactory.createEmptyBorder(10, 5, 200, 5)
         ));
 
         // Form thông tin chi tiết
@@ -65,7 +76,6 @@ public class NhanVien_GUI extends JPanel {
         pnlR.add(createFormRow("Ngày vào làm:", dateNgayVaoLam = new JDateChooser()));
         pnlR.add(createFormRow("Lương:", txtLuong = new JTextField()));
         pnlR.add(createFormRow("Ca:", dateCaLam = new JDateChooser()));
-        pnlR.add(createFormRow("Mã NQL:", txtMaNQL = new JTextField()));
         pnlR.add(createFormRow("Mã TK:", txtMaTK = new JTextField()));
         // Button Panel
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 5));
@@ -82,12 +92,24 @@ public class NhanVien_GUI extends JPanel {
 
         pnlR.add(buttonPanel);
 
-        // === ADD TO MAIN PANEL ===
+//      ================================================================================= thêm pannel
         add(pnlL, BorderLayout.WEST);
         add(pnlR, BorderLayout.CENTER);
+        LoadData();
     }
 
-    private JPanel createFormRow(String label, JComponent component) {
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		Object o = e.getSource();
+		if(o.equals(btnThem)) {
+			
+		}
+	}
+	
+//  ================================================================================= methods
+//	tạo form cho dòng nhập
+	private JPanel createFormRow(String label, JComponent component) {
         JPanel panel = new JPanel(new FlowLayout());
         JLabel lbl = new JLabel(label);
         lbl.setPreferredSize(new Dimension(100, 20));
@@ -95,5 +117,44 @@ public class NhanVien_GUI extends JPanel {
         panel.add(lbl);
         panel.add(component);
         return panel;
+    }
+    
+//	thêm dữ liệu vào bảng
+    private void LoadData() {
+    	List<NhanVien> dsNV = new ArrayList<NhanVien>();
+    	try {
+    		dsNV = nhanVien_DAO.getAll();
+		} catch (SQLException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+    	for(NhanVien x:dsNV) {
+    		String[] s = {x.getMa(),x.getHoTen(),x.getSdt(),x.getEmail(),String.valueOf(x.getNamSinh()),String.valueOf(x.getDiaChi()),String.valueOf(x.getNgayVaoLam()),String.valueOf(x.getLuong()),String.valueOf(x.getCaLam()),x.getMaNQL(),x.getMaTK()};
+    		model.addRow(s);
+    	}
+    }
+    
+//  kiểm tra data
+    private void ValidData() {
+    	if (txtMaNV.getText().trim().isEmpty()) {
+    	    JOptionPane.showMessageDialog(this, "Phải điền mã nhân viên");
+    	} else if (txtHoTen.getText().trim().isEmpty()) {
+    	    JOptionPane.showMessageDialog(this, "Phải điền họ tên");
+    	} else if (txtSDT.getText().trim().isEmpty()) {
+    	    JOptionPane.showMessageDialog(this, "Phải điền số điện thoại");
+    	} else if (txtEmail.getText().trim().isEmpty()) {
+    	    JOptionPane.showMessageDialog(this, "Phải điền email");
+    	} else if (dateNamSinh.getDate() == null) {
+    	    JOptionPane.showMessageDialog(this, "Phải chọn năm sinh");
+    	} else if (txtDiaChi.getText().trim().isEmpty()) {
+    	    JOptionPane.showMessageDialog(this, "Phải điền địa chỉ");
+    	} else if (dateNgayVaoLam.getDate() == null) {
+    	    JOptionPane.showMessageDialog(this, "Phải chọn ngày vào làm");
+    	} else if (txtLuong.getText().trim().isEmpty()) {
+    	    JOptionPane.showMessageDialog(this, "Phải điền lương");
+    	} 
+//    	else if (cboCaLam.getSelectedItem() == null || cboCaLam.getSelectedItem().toString().trim().isEmpty()) {
+//    	    JOptionPane.showMessageDialog(this, "Phải chọn ca làm");
+//    	} 
     }
 }

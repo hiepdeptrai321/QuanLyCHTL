@@ -3,7 +3,10 @@ package gui;
 import javax.swing.*;
 
 import connectDB.ConnectDB;
+import dao.NguoiQuanLy_DAO;
+import dao.NhanVien_DAO;
 import dao.TaiKhoan_DAO;
+import entity.NhanVien;
 import entity.TaiKhoan;
 
 import java.awt.*;
@@ -17,12 +20,17 @@ public class DangNhap_GUI extends JFrame implements ActionListener {
     private JPasswordField txtPass;
     private JLabel lblError;
 	private TaiKhoan_DAO tk;
+	private NhanVien_DAO nv;
+	private NguoiQuanLy_DAO ql;
+	public static NhanVien nhanVienHienHanh;
 	
 
     public DangNhap_GUI() {
         super("Đăng nhập hệ thống");
         ConnectDB.getInstance().connect();
-        tk = new TaiKhoan_DAO(ConnectDB.getInstance().getConnection());
+        tk = new TaiKhoan_DAO(ConnectDB.getConnection());
+        ql = new NguoiQuanLy_DAO(ConnectDB.getConnection());
+		nv = new NhanVien_DAO(ConnectDB.getConnection());
         setSize(1000, 600);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -95,13 +103,16 @@ public class DangNhap_GUI extends JFrame implements ActionListener {
     	String pass = new String(txtPass.getPassword());
     	String passTemp = new String();
     	boolean userTemp = false;
+    	TaiKhoan tkTemp = new TaiKhoan();
+
     	if (user.isEmpty() || pass.isEmpty()) {
             lblError.setText("Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu!");
             return;
         }
     	
     	try {
-            TaiKhoan tkTemp = tk.getByTK(user);
+
+            tkTemp = tk.getByTK(user);
             if (tkTemp != null) {
                 passTemp = tkTemp.getMatKhau();
                 userTemp = true;
@@ -116,8 +127,25 @@ public class DangNhap_GUI extends JFrame implements ActionListener {
         	lblError.setText("Sai mật khẩu");
         }else {
             lblError.setText("");
-            TrangChu_GUI trangChu = new TrangChu_GUI();
-            trangChu.setVisible(true);
+            
+            if(tkTemp.getVaiTro().compareTo("quanly")==0) {
+            	try {
+            		nhanVienHienHanh = ql.getByTK(tkTemp.getMaTK());
+            	} catch (SQLException e1) {
+	            	// TODO Auto-generated catch block
+	            	e1.printStackTrace();
+            	}
+            }
+        	else {
+            	try {
+            		nhanVienHienHanh = nv.getByTK(tkTemp.getMaTK());
+            	} catch (SQLException e1) {
+	            	// TODO Auto-generated catch block
+	            	e1.printStackTrace();
+            	}
+        	}
+            new TrangChu_GUI();
+            
             this.setVisible(false);
         }
     }

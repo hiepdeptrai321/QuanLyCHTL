@@ -72,7 +72,7 @@ import entity.SanPham;
 
 public class HoaDon_GUI extends JPanel implements ActionListener {
 
-    private JPanel contentPane; 
+	private JPanel contentPane; 
     private JTabbedPane tabbedPane; 
     private JPanel panelDanhSach; 
     private JTextField txtTimKiem;
@@ -117,7 +117,6 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
     
     private SanPham_DAO sanPhamDAO;
     private KhachHang_DAO khachHangDAO;
-    private NhanVien nhanVienHienTai;
     private KhachHang khachHangHienTai;
 	private List<ChiTietHoaDon> dsChiTietHoaDonTam = new ArrayList<ChiTietHoaDon>();
 
@@ -851,8 +850,8 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
              String maHDMoi = "HD" + System.currentTimeMillis(); // Ví dụ mã tạm
              hoaDonMoi.setMaHD(maHDMoi);
              hoaDonMoi.setNgayLap(new Date()); // Ngày giờ hiện tại
-             hoaDonMoi.setNv(nhanVienHienTai); // Nhân viên đang đăng nhập
-             hoaDonMoi.setKh(khachHangHienTai); // Khách hàng đang chọn (có thể null)
+             hoaDonMoi.setNv(DangNhap_GUI.nhanVienHienHanh); // Nhân viên đang đăng nhập
+             hoaDonMoi.setKh(khachHangHienTai); 
              hoaDonMoi.setQuay(1); // Ví dụ quầy số 1
              // Lấy các giá trị tiền tệ đã tính
              try {

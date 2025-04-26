@@ -12,7 +12,7 @@ public class HoaDon {
     private double tienThoi;
     private int tongSoLuongSP;
     private KhachHang kh;
-    private NhanVien nv;
+    private Nguoi nv;
     
 	public HoaDon(String maHD, Date ngayLap, int quay, double tongTien, double thanhTien, double tienNhan,
 			double tienThoi, int tongSoLuongSP, KhachHang kh, NhanVien nv) {
@@ -69,7 +69,7 @@ public class HoaDon {
 		return kh;
 	}
 
-	public NhanVien getNv() {
+	public Nguoi getNv() {
 		return nv;
 	}
 
@@ -109,8 +109,8 @@ public class HoaDon {
 		this.kh = kh;
 	}
 
-	public void setNv(NhanVien nv) {
-		this.nv = nv;
+	public void setNv(Nguoi nhanVienHienHanh) {
+		this.nv = nhanVienHienHanh;
 	}
 
 	@Override
