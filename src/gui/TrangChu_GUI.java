@@ -280,12 +280,12 @@ public class TrangChu_GUI extends JFrame implements MouseListener,ActionListener
 	        pnlC.repaint(); 
 		}else if(o == btnSP) {
 			pnlC.removeAll();
-//			pnlC.add(new HoaDon_GUI(),BorderLayout.CENTER);
+			pnlC.add(new SanPham_GUI(),BorderLayout.CENTER);
 			pnlC.revalidate();
 	        pnlC.repaint(); 
 		}else if(o == btnKH) {
 			pnlC.removeAll();
-//			pnlC.add(new HoaDon_GUI(),BorderLayout.CENTER);
+			pnlC.add(new KhachHang_GUI(),BorderLayout.CENTER);
 			pnlC.revalidate();
 	        pnlC.repaint(); 
 		}else if(o == btnHD) {

@@ -38,7 +38,7 @@ import connectDB.ConnectDB;
 import dao.SanPham_DAO;
 import entity.SanPham;
 
-public class SanPham_GUI extends JFrame implements ActionListener, MouseListener {
+public class SanPham_GUI extends JPanel implements ActionListener, MouseListener {
 
     private Connection conn;
     private SanPham_DAO sanPhamDAO; 
@@ -79,12 +79,7 @@ public class SanPham_GUI extends JFrame implements ActionListener, MouseListener
             JOptionPane.showMessageDialog(null, "Không thể kết nối đến cơ sở dữ liệu. Ứng dụng sẽ thoát.", "Lỗi kết nối", JOptionPane.ERROR_MESSAGE);
             System.exit(1); 
         }
-
-
-        setTitle("Quản Lý Sản Phẩm"); 
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(1200, 700);
-        setLocationRelativeTo(null); 
+        setPreferredSize(new Dimension(1200, 700));
 
         initComponents();
         
@@ -105,15 +100,25 @@ public class SanPham_GUI extends JFrame implements ActionListener, MouseListener
     public static void main(String[] args) {
         // Chạy giao diện trên Event Dispatch Thread (EDT)
         SwingUtilities.invokeLater(() -> {
-            new SanPham_GUI().setVisible(true); 
+        	JFrame frame = new JFrame("Quản Lý Sản Phẩm"); 
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+            SanPham_GUI sanPhamPanel = new SanPham_GUI();
+
+            frame.add(sanPhamPanel); // Thêm panel vào content pane mặc định của frame
+
+            // 4. Đặt các thuộc tính khác cho JFrame và hiển thị
+            frame.setSize(1200, 700); // Có thể dùng pack() thay thế
+            frame.pack(); // Tự động điều chỉnh kích thước frame dựa trên preferredSize của panel con
+            frame.setLocationRelativeTo(null); 
+            frame.setVisible(true); 
         });
     }
 
     private void initComponents() {
         // Main Panel with BorderLayout
-        JPanel mainPanel = new JPanel(new BorderLayout());
-        // Thêm padding cho panel chính
-        mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+    	this.setLayout(new BorderLayout()); // Ví dụ dùng BorderLayout
+        this.setBorder(new EmptyBorder(10, 10, 10, 10)); // Padding cho JPanel chính
 
         // North Panel (Title)
         JPanel northPanel = new JPanel();
@@ -122,7 +127,7 @@ public class SanPham_GUI extends JFrame implements ActionListener, MouseListener
         lblTitle.setFont(new Font("Arial", Font.BOLD, 28));
         lblTitle.setForeground(new Color(50, 100, 150)); // Màu sắc cho tiêu đề
         northPanel.add(lblTitle);
-        mainPanel.add(northPanel, BorderLayout.NORTH);
+        this.add(northPanel, BorderLayout.NORTH);
 
         // Center Panel with JSplitPane
         JSplitPane centerSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
@@ -137,18 +142,16 @@ public class SanPham_GUI extends JFrame implements ActionListener, MouseListener
         JPanel detailsPanel = createDetailsPanel();
         centerSplitPane.setRightComponent(detailsPanel);
 
-        mainPanel.add(centerSplitPane, BorderLayout.CENTER);
+        this.add(centerSplitPane, BorderLayout.CENTER);
 
         // Add mainPanel to the frame
-        getContentPane().add(mainPanel);
+     //   getContentPane().add(mainPanel);
 
          // Vô hiệu hóa các trường và nút ban đầu khi chưa chọn hoặc bấm xóa trắng
        // setFieldsEditable(false);
-        txtMaSP.setEditable(false); // MaSP is usually not editable after creation
-        // btnSua và btnXoa nên vô hiệu hóa ban đầu, chỉ bật khi chọn dòng
+        txtMaSP.setEditable(false); 
         btnSua.setEnabled(false);
         btnXoa.setEnabled(false);
-        // btnThem và btnXoaTrang có thể bật ban đầu
         btnThem.setEnabled(true);
         btnXoaTrang.setEnabled(true);
     }
@@ -338,8 +341,9 @@ public class SanPham_GUI extends JFrame implements ActionListener, MouseListener
                                 btnSua.setEnabled(false);
                                 btnXoa.setEnabled(false);
                                 btnThem.setEnabled(true); 
-                         }
-                    } catch (SQLException ex) {
+                            }	
+                         	}
+                         } catch (SQLException ex) {
                         ex.printStackTrace();
                         JOptionPane.showMessageDialog(SanPham_GUI.this, "Lỗi khi lấy thông tin chi tiết sản phẩm: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
                         clearFields();

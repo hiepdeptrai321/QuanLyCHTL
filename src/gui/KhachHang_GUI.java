@@ -17,12 +17,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Date; // Using java.util.Date for JTextField parsing/formatting simplicity
+import java.util.Date;
+import com.toedter.calendar.JDateChooser;// Using java.util.Date for JTextField parsing/formatting simplicity
 
-public class KhachHang_GUI extends JFrame implements ActionListener {
+public class KhachHang_GUI extends JPanel implements ActionListener {
 
     private Connection conn;
     private KhachHang_DAO khachHangDAO;
@@ -30,11 +30,14 @@ public class KhachHang_GUI extends JFrame implements ActionListener {
     private JTable tableKhachHang;
 
     // Details Panel Components
-    private JTextField txtMa, txtNgayDangKy, txtDiemTichLuy, txtHangThanhVien, txtSoLanMuaHang,
-                       txtHoTen, txtSdt, txtEmail, txtNamSinh, txtMaNV;
+    private JTextField txtMa, txtDiemTichLuy, txtHangThanhVien,txtDiaChi, txtSoLanMuaHang,
+                       txtHoTen, txtSdt, txtEmail, txtMaNV;
+	JDateChooser txtNgayDangKy;
+	JDateChooser txtNamSinh;
     private JButton btnThem, btnSua, btnXoa, btnXoaTrang;
 
     private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	private JSplitPane centerSplitPane;
 
     public KhachHang_GUI() {
         // Cố gắng thiết lập Look and Feel đẹp hơn (ví dụ: Nimbus)
@@ -64,12 +67,6 @@ public class KhachHang_GUI extends JFrame implements ActionListener {
             System.exit(1); 
         }
 
-
-        setTitle("Quản Lý Khách Hàng");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(1200, 700);
-        setLocationRelativeTo(null); 
-
         initComponents();
         // Chỉ tải dữ liệu nếu DAO đã được khởi tạo thành công
         if (this.khachHangDAO != null) {
@@ -84,35 +81,42 @@ public class KhachHang_GUI extends JFrame implements ActionListener {
              btnThem.setEnabled(false);
              btnSua.setEnabled(false);
              btnXoa.setEnabled(false);
-             // btnXoaTrang vẫn có thể giữ lại để xóa trắng các trường đã nhập (nếu có)
         }
     }
     public static void main(String[] args) {
         // Chạy giao diện trên Event Dispatch Thread (EDT)
         SwingUtilities.invokeLater(() -> {
-            new KhachHang_GUI().setVisible(true);
+        	JFrame frame = new JFrame("Quản Lý Khách Hàng"); 
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
+
+            // 2. Tạo JPanel KhachHang_GUI
+            KhachHang_GUI khachHangPanel = new KhachHang_GUI();
+
+            frame.add(khachHangPanel);
+
+            frame.pack(); // Tự động điều chỉnh kích thước frame
+            frame.setLocationRelativeTo(null);
+            frame.setVisible(true); 
         });
     }
 
     private void initComponents() {
-        
-        JPanel mainPanel = new JPanel(new BorderLayout());
-        // Thêm padding cho panel chính
-        mainPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+        this.setLayout(new BorderLayout());
+        this.setBorder(new EmptyBorder(10, 10, 10, 10));
 
         // North Panel (Title)
         JPanel northPanel = new JPanel();
         JLabel lblTitle = new JLabel("QUẢN LÝ KHÁCH HÀNG");
-        // Tăng kích thước và kiểu chữ cho tiêu đề
         lblTitle.setFont(new Font("Arial", Font.BOLD, 28));
-        lblTitle.setForeground(new Color(50, 100, 150)); // Màu sắc cho tiêu đề
+        lblTitle.setForeground(new Color(50, 100, 150));
         northPanel.add(lblTitle);
-        mainPanel.add(northPanel, BorderLayout.NORTH);
+        this.add(northPanel, BorderLayout.NORTH);
 
         // Center Panel with JSplitPane
-        JSplitPane centerSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-        centerSplitPane.setResizeWeight(0.8); 
-        centerSplitPane.setDividerSize(8); 
+        centerSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+        centerSplitPane.setResizeWeight(0.7);  
+        centerSplitPane.setDividerSize(8);    
+        centerSplitPane.setDividerLocation(0.7); 
 
         // Left Panel (Table)
         JPanel tablePanel = createTablePanel();
@@ -122,17 +126,12 @@ public class KhachHang_GUI extends JFrame implements ActionListener {
         JPanel detailsPanel = createDetailsPanel();
         centerSplitPane.setRightComponent(detailsPanel);
 
-        mainPanel.add(centerSplitPane, BorderLayout.CENTER) ;
+        this.add(centerSplitPane, BorderLayout.CENTER); 
 
-        // Add mainPanel to the frame
-        getContentPane().add(mainPanel);
-
-        setFieldsEditable(false);
+        setFieldsEditable(true);
         txtMa.setEditable(false);
-
         btnSua.setEnabled(false);
         btnXoa.setEnabled(false);
-
         btnThem.setEnabled(true);
         btnXoaTrang.setEnabled(true);
     }
@@ -143,7 +142,10 @@ public class KhachHang_GUI extends JFrame implements ActionListener {
             new TitledBorder("Danh sách Khách Hàng"),
             new EmptyBorder(5, 5, 5, 5)));
 
-        String[] columnNames = {"Mã", "Ngày ĐK", "Điểm TL", "Hạng TV", "Số lần mua", "Họ tên", "SĐT", "Email", "Năm sinh", "Mã NV"};
+        String[] columnNames = {
+                "Mã", "Họ tên", "SĐT", "Email", "Năm sinh", "Địa chỉ",
+                "Ngày ĐK", "Điểm TL", "Hạng TV", "Số lần mua", "Mã NV"
+        };
         tableModel = new DefaultTableModel(columnNames, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -151,14 +153,12 @@ public class KhachHang_GUI extends JFrame implements ActionListener {
             }
         };
         tableKhachHang = new JTable(tableModel);
-        // Tăng chiều cao dòng cho bảng
-        tableKhachHang.setRowHeight(25);
-        // Điều chỉnh font cho header bảng
+        tableKhachHang.setRowHeight(30); // Increase row height for better readability
         tableKhachHang.getTableHeader().setFont(new Font("Arial", Font.BOLD, 12));
         tableKhachHang.getTableHeader().setBackground(new Color(220, 220, 220));
 
         JScrollPane scrollPane = new JScrollPane(tableKhachHang);
-        panel.add(scrollPane, BorderLayout.CENTER);
+        panel.add(scrollPane, BorderLayout.CENTER); // Ensure table is inside scrollable pane
 
         return panel;
     }
@@ -171,46 +171,56 @@ public class KhachHang_GUI extends JFrame implements ActionListener {
 
         JPanel fieldsPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5); // Padding giữa các components
+        gbc.insets = new Insets(0, 5, 5, 5); // Padding giữa các components
         gbc.anchor = GridBagConstraints.WEST; // Căn lề trái cho components
 
         // Khởi tạo Text Fields
-        txtMa = new JTextField(25); // Tăng kích thước hiển thị
-        txtNgayDangKy = new JTextField(25);
-        txtDiemTichLuy = new JTextField(25);
-        txtHangThanhVien = new JTextField(25);
-        txtSoLanMuaHang = new JTextField(25);
-        txtHoTen = new JTextField(25);
-        txtSdt = new JTextField(25);
-        txtEmail = new JTextField(25);
-        txtNamSinh = new JTextField(25);
-        txtMaNV = new JTextField(25);
+        int tfCols = 25;
+        txtMa = new JTextField(tfCols);
+        txtHoTen = new JTextField(tfCols);
+        txtSdt = new JTextField(tfCols);
+        txtEmail = new JTextField(tfCols);
+        txtNamSinh = new JDateChooser();  // Changed to JDateChooser
+        txtDiaChi = new JTextField(tfCols); 
+        txtNgayDangKy = new JDateChooser();  // Changed to JDateChooser
+        txtDiemTichLuy = new JTextField(tfCols);
+        txtHangThanhVien = new JTextField(tfCols);
+        txtSoLanMuaHang = new JTextField(tfCols);
+        txtMaNV = new JTextField(tfCols);
 
         // Thêm Tooltip cho các trường ngày tháng
 //        txtNgayDangKy.setToolTipText("Định dạng: yyyy-MM-dd");
 //        txtNamSinh.setToolTipText("Định dạng: yyyy-MM-dd");
+        JPanel wrapFields = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        wrapFields.add(fieldsPanel);
 
         int row = 0;
-        addField(fieldsPanel, gbc, new JLabel("Mã:"), txtMa, row++);
-        addField(fieldsPanel, gbc, new JLabel("Ngày đăng ký:"), txtNgayDangKy, row++);
-        addField(fieldsPanel, gbc, new JLabel("Điểm tích lũy:"), txtDiemTichLuy, row++);
-        addField(fieldsPanel, gbc, new JLabel("Hạng thành viên:"), txtHangThanhVien, row++);
-        addField(fieldsPanel, gbc, new JLabel("Số lần mua hàng:"), txtSoLanMuaHang, row++);
+
+
+        addField(fieldsPanel, gbc, new JLabel("Mã KH:"), txtMa, row++);
         addField(fieldsPanel, gbc, new JLabel("Họ tên:"), txtHoTen, row++);
         addField(fieldsPanel, gbc, new JLabel("SĐT:"), txtSdt, row++);
         addField(fieldsPanel, gbc, new JLabel("Email:"), txtEmail, row++);
         addField(fieldsPanel, gbc, new JLabel("Năm sinh:"), txtNamSinh, row++);
-        addField(fieldsPanel, gbc, new JLabel("Mã NV:"), txtMaNV, row++);
+        addField(fieldsPanel, gbc, new JLabel("Địa chỉ:"), txtDiaChi, row++); // Added DiaChi field
+        addField(fieldsPanel, gbc, new JLabel("Ngày Đăng ký:"), txtNgayDangKy, row++);
+        addField(fieldsPanel, gbc, new JLabel("Điểm tích lũy:"), txtDiemTichLuy, row++);
+        addField(fieldsPanel, gbc, new JLabel("Hạng thành viên:"), txtHangThanhVien, row++);
+        addField(fieldsPanel, gbc, new JLabel("Số lần mua hàng:"), txtSoLanMuaHang, row++);
+        addField(fieldsPanel, gbc, new JLabel("Mã NV (người tạo):"), txtMaNV, row++);
+        
+        gbc.gridy = row;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.VERTICAL;
+        fieldsPanel.add(new JPanel(), gbc);
 
-
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10)); // Tăng khoảng cách giữa các nút
-
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10)); 
+        Dimension buttonSize = new Dimension(100, 30); 
         btnThem = new JButton("Thêm");
         btnSua = new JButton("Sửa");
         btnXoa = new JButton("Xóa");
         btnXoaTrang = new JButton("Xóa trắng");
 
-        Dimension buttonSize = new Dimension(100, 30); 
         btnThem.setPreferredSize(buttonSize);
         btnSua.setPreferredSize(buttonSize);
         btnXoa.setPreferredSize(buttonSize);
@@ -221,7 +231,8 @@ public class KhachHang_GUI extends JFrame implements ActionListener {
         buttonPanel.add(btnXoa);
         buttonPanel.add(btnXoaTrang);
 
-        panel.add(fieldsPanel, BorderLayout.CENTER); 
+     //   panel.add(fieldsPanel, BorderLayout.CENTER); 
+        panel.add(wrapFields, BorderLayout.CENTER);
         panel.add(buttonPanel, BorderLayout.SOUTH); 
 
         btnThem.addActionListener(this);
@@ -234,7 +245,7 @@ public class KhachHang_GUI extends JFrame implements ActionListener {
     }
 
      // Helper method to add a label and a text field using GridBagLayout
-    private void addField(JPanel panel, GridBagConstraints gbc, JLabel label, JTextField textField, int row) {
+    private void addField(JPanel panel, GridBagConstraints gbc, JLabel label, JComponent component, int row) {
         gbc.gridx = 0; // Cột 0 cho Label
         gbc.gridy = row; // Dòng hiện tại
         gbc.weightx = 0; // Label không co giãn chiều ngang
@@ -244,20 +255,21 @@ public class KhachHang_GUI extends JFrame implements ActionListener {
         gbc.gridx = 1; // Cột 1 cho TextField
         gbc.weightx = 1.0; // TextField chiếm hết không gian còn lại theo chiều ngang
         gbc.fill = GridBagConstraints.HORIZONTAL; // Điền đầy ô theo chiều ngang
-        panel.add(textField, gbc);
+        panel.add(component, gbc);
     }
 
 
     private void setFieldsEditable(boolean editable) {
-         txtNgayDangKy.setEditable(editable);
-         txtDiemTichLuy.setEditable(editable);
-         txtHangThanhVien.setEditable(editable);
-         txtSoLanMuaHang.setEditable(editable);
-         txtHoTen.setEditable(editable);
-         txtSdt.setEditable(editable);
-         txtEmail.setEditable(editable);
-         txtNamSinh.setEditable(editable);
-         txtMaNV.setEditable(editable);
+    	txtHoTen.setEditable(editable);
+        txtSdt.setEditable(editable);
+        txtEmail.setEditable(editable);
+       // txtNamSinh.setEditable(editable);
+        txtDiaChi.setEditable(editable); // Added DiaChi
+       // txtNgayDangKy.setEditable(editable);
+        txtDiemTichLuy.setEditable(editable);
+        txtHangThanhVien.setEditable(editable);
+        txtSoLanMuaHang.setEditable(editable);
+        txtMaNV.setEditable(editable);
          // ko co txtma
     }
 
@@ -268,16 +280,17 @@ public class KhachHang_GUI extends JFrame implements ActionListener {
             if (khachHangDAO != null) {
                 List<KhachHang> khachHangList = khachHangDAO.getAll();
                 for (KhachHang kh : khachHangList) {
-                    Object[] rowData = {
+                	Object[] rowData = {
                             kh.getMa(),
-                            kh.getNgayDangKy() != null ? dateFormat.format(kh.getNgayDangKy()) : "",
-                            kh.getDiemTichLuy(),
-                            kh.getHangThanhVien(),
-                            kh.getSoLanMuaHang(),
                             kh.getHoTen(),
                             kh.getSdt(),
                             kh.getEmail(),
                             kh.getNamSinh() != null ? dateFormat.format(kh.getNamSinh()) : "",
+                            kh.getDiaChi(), // Added DiaChi data
+                            kh.getNgayDangKy() != null ? dateFormat.format(kh.getNgayDangKy()) : "",
+                            kh.getDiemTichLuy(),
+                            kh.getHangThanhVien(),
+                            kh.getSoLanMuaHang(),
                             kh.getMaNV()
                     };
                     tableModel.addRow(rowData);
@@ -298,27 +311,24 @@ public class KhachHang_GUI extends JFrame implements ActionListener {
                     if (selectedRow != -1) {
                         String maKhachHang = tableModel.getValueAt(selectedRow, 0).toString();
                         try {
-                             if (khachHangDAO != null) {
+                            if (khachHangDAO != null) {
                                 KhachHang selectedKhachHang = khachHangDAO.getById(maKhachHang);
                                 if (selectedKhachHang != null) {
-                                    populateDetailsPanel(selectedKhachHang);
+                                    populateDetailsPanel(selectedKhachHang); // Populate details when row is selected
                                     setFieldsEditable(true); 
                                     txtMa.setEditable(false); 
                                     btnSua.setEnabled(true);
                                     btnXoa.setEnabled(true);                                  
                                     btnThem.setEnabled(false);
-
                                 } else {
                                     clearFields();
-                                    setFieldsEditable(false); 
+                                    setFieldsEditable(true); 
                                     txtMa.setEditable(false);
-                                     // Tắt nút Sửa và Xóa
                                     btnSua.setEnabled(false);
                                     btnXoa.setEnabled(false);
-                                    // Bật lại nút Thêm
-                                     btnThem.setEnabled(true);
+                                    btnThem.setEnabled(true);
                                 }
-                             }
+                            }
                         } catch (SQLException ex) {
                             ex.printStackTrace();
                             JOptionPane.showMessageDialog(KhachHang_GUI.this, "Lỗi khi lấy thông tin chi tiết khách hàng: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
@@ -329,7 +339,7 @@ public class KhachHang_GUI extends JFrame implements ActionListener {
                             btnXoa.setEnabled(false);
                             btnThem.setEnabled(true);
                         }
-                    } else {                        
+                    } else {
                         clearFields();                        
                         setFieldsEditable(true);
                         txtMa.setEditable(true);
@@ -345,26 +355,37 @@ public class KhachHang_GUI extends JFrame implements ActionListener {
 
     private void populateDetailsPanel(KhachHang kh) {
         txtMa.setText(kh.getMa());
-        txtNgayDangKy.setText(kh.getNgayDangKy() != null ? dateFormat.format(new Date(kh.getNgayDangKy().getTime())) : "");
-        txtDiemTichLuy.setText(String.valueOf(kh.getDiemTichLuy()));
-        txtHangThanhVien.setText(String.valueOf(kh.getHangThanhVien()));
-        txtSoLanMuaHang.setText(String.valueOf(kh.getSoLanMuaHang()));
         txtHoTen.setText(kh.getHoTen());
         txtSdt.setText(kh.getSdt());
         txtEmail.setText(kh.getEmail());
-        txtNamSinh.setText(kh.getNamSinh() != null ? dateFormat.format(new Date(kh.getNamSinh().getTime())) : "");
+        
+        if (kh.getNamSinh() != null) {
+            txtNamSinh.setDate(kh.getNamSinh()); 
+        } else {
+            txtNamSinh.setDate(null); 
+        }
+        
+        txtDiaChi.setText(kh.getDiaChi()); 
+        
+        if (kh.getNgayDangKy() != null) {
+            txtNgayDangKy.setDate(kh.getNgayDangKy()); 
+        } else {
+            txtNgayDangKy.setDate(null); 
+        }
+        
+        txtDiemTichLuy.setText(String.valueOf(kh.getDiemTichLuy()));
+        txtHangThanhVien.setText(String.valueOf(kh.getHangThanhVien()));
+        txtSoLanMuaHang.setText(String.valueOf(kh.getSoLanMuaHang()));
         txtMaNV.setText(kh.getMaNV());
     }
     private void clearFields() {
-        txtMa.setText("");
-        txtNgayDangKy.setText("");
+        txtMa.setText("");        
         txtDiemTichLuy.setText("");
         txtHangThanhVien.setText("");
         txtSoLanMuaHang.setText("");
         txtHoTen.setText("");
         txtSdt.setText("");
         txtEmail.setText("");
-        txtNamSinh.setText("");
         txtMaNV.setText("");
 
         setFieldsEditable(true);
@@ -394,52 +415,74 @@ public class KhachHang_GUI extends JFrame implements ActionListener {
         else if(o == btnXoaTrang)
         	xoatrang();
     }
+    private boolean validData(String ma, String hoTen, String sdt, String email, Date namSinhDate, Date ngayDangKyDate, 
+            String diaChi, String diemTichLuyStr, String hangThanhVienStr, String soLanMuaHangStr, String maNV) {
+		// Validate required fields
+		if (ma.isEmpty() || hoTen.isEmpty() || sdt.isEmpty() || email.isEmpty() ||
+			namSinhDate == null || ngayDangKyDate == null || diaChi.isEmpty() || 
+			diemTichLuyStr.isEmpty() || hangThanhVienStr.isEmpty() || soLanMuaHangStr.isEmpty() || maNV.isEmpty()) {
+			
+			JOptionPane.showMessageDialog(this, "Vui lòng điền đầy đủ thông tin.", "Thiếu thông tin", JOptionPane.WARNING_MESSAGE);
+		return false;
+		}
+		
+		// Validate phone number format (10 or 11 digits)
+		if (!sdt.matches("^\\d{10,11}$")) { 
+			JOptionPane.showMessageDialog(this, "Số điện thoại không hợp lệ (phải là 10-11 chữ số).", "Lỗi định dạng", JOptionPane.WARNING_MESSAGE);
+		return false;
+		}
+		
+		// Validate email format
+		if (!email.contains("@") || !email.contains(".")) {
+			JOptionPane.showMessageDialog(this, "Địa chỉ email không hợp lệ.", "Lỗi định dạng", JOptionPane.WARNING_MESSAGE);
+		return false;
+		}
+		
+		// Validate non-negative integers
+		int diemTichLuy = 0, hangThanhVien = 0, soLanMuaHang = 0;
+		try {
+			diemTichLuy = Integer.parseInt(diemTichLuyStr);
+			hangThanhVien = Integer.parseInt(hangThanhVienStr);
+			soLanMuaHang = Integer.parseInt(soLanMuaHangStr);
+		
+			if (diemTichLuy < 0 || hangThanhVien < 0 || soLanMuaHang < 0) {
+				JOptionPane.showMessageDialog(this, "Điểm, hạng và số lần mua hàng không được âm.", "Lỗi dữ liệu", JOptionPane.WARNING_MESSAGE);
+				return false;
+			}
+		} catch (NumberFormatException e) {
+			JOptionPane.showMessageDialog(this, "Điểm, hạng hoặc số lần phải là số", "Lỗi định dạng", JOptionPane.WARNING_MESSAGE);
+		return false;
+		}
+		
+		return true;
+	}
 
     private void them() {
         String ma = txtMa.getText().trim();
-        String ngayDangKyStr = txtNgayDangKy.getText().trim();
-        String diemTichLuyStr = txtDiemTichLuy.getText().trim();
-        String hangThanhVienStr = txtHangThanhVien.getText().trim();
-        String soLanMuaHangStr = txtSoLanMuaHang.getText().trim();
         String hoTen = txtHoTen.getText().trim();
         String sdt = txtSdt.getText().trim();
         String email = txtEmail.getText().trim();
-        String namSinhStr = txtNamSinh.getText().trim();
+        Date namSinhDate = txtNamSinh.getDate();  // Get date from JDateChooser
+        Date ngayDangKyDate = txtNgayDangKy.getDate();  // Get date from JDateChooser
+        String diaChi = txtDiaChi.getText().trim();
+        String diemTichLuyStr = txtDiemTichLuy.getText().trim();
+        String hangThanhVienStr = txtHangThanhVien.getText().trim();
+        String soLanMuaHangStr = txtSoLanMuaHang.getText().trim();
         String maNV = txtMaNV.getText().trim();
-    
-        if (ma.isEmpty() || ngayDangKyStr.isEmpty() || diemTichLuyStr.isEmpty() ||
-            hangThanhVienStr.isEmpty() || soLanMuaHangStr.isEmpty() || hoTen.isEmpty() ||
-            sdt.isEmpty() || email.isEmpty() || namSinhStr.isEmpty() || maNV.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Vui lòng điền đầy đủ thông tin.", "Lỗi nhập liệu", JOptionPane.WARNING_MESSAGE);
+
+        // Validate input
+        if (!validData(ma, hoTen, sdt, email, namSinhDate, ngayDangKyDate, diaChi, diemTichLuyStr, hangThanhVienStr, soLanMuaHangStr, maNV)) {
             return;
         }
-    
-        Date ngayDangKySql = null;
-        int diemTichLuy = 0;
-        int hangThanhVien = 0;
-        int soLanMuaHang = 0;
-        Date namSinhSql = null;
-    
-        try {
-            java.util.Date ngayDKUtil = dateFormat.parse(ngayDangKyStr);
-            ngayDangKySql = new java.sql.Date(ngayDKUtil.getTime());
 
-            java.util.Date namSinhUtil = dateFormat.parse(namSinhStr);
-            namSinhSql = new java.sql.Date(namSinhUtil.getTime());
+        java.sql.Date ngayDangKySql = new java.sql.Date(ngayDangKyDate.getTime());
+        java.sql.Date namSinhSql = new java.sql.Date(namSinhDate.getTime());
 
-            diemTichLuy = Integer.parseInt(diemTichLuyStr);
-            hangThanhVien = Integer.parseInt(hangThanhVienStr);
-            soLanMuaHang = Integer.parseInt(soLanMuaHangStr);
-        } catch (ParseException e) {
-            JOptionPane.showMessageDialog(this, "Sai định dạng ngày (yyyy-MM-dd)", "Lỗi định dạng", JOptionPane.WARNING_MESSAGE);
-            return;
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Điểm, hạng hoặc số lần phải là số", "Lỗi định dạng", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-    
-        KhachHang khachHangMoi = new KhachHang(ma, ngayDangKySql, diemTichLuy, hangThanhVien, soLanMuaHang, hoTen, sdt, email, namSinhSql, maNV);
-    
+        KhachHang khachHangMoi = new KhachHang(
+            ma, hoTen, sdt, email, namSinhSql, diaChi,
+            ngayDangKySql, Integer.parseInt(diemTichLuyStr), Integer.parseInt(hangThanhVienStr), Integer.parseInt(soLanMuaHangStr), maNV
+        );
+
         try {
             boolean success = khachHangDAO.insert(khachHangMoi);
             if (success) {
@@ -451,7 +494,11 @@ public class KhachHang_GUI extends JFrame implements ActionListener {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Lỗi khi thêm khách hàng vào cơ sở dữ liệu: " + e.getMessage(), "Lỗi SQL", JOptionPane.ERROR_MESSAGE);
+            if (e.getSQLState().startsWith("23")) { // Common state code for integrity constraint violation
+                JOptionPane.showMessageDialog(this, "Lỗi: Mã khách hàng '" + ma + "' đã tồn tại.", "Lỗi Trùng Mã", JOptionPane.ERROR_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "Lỗi khi thêm khách hàng vào cơ sở dữ liệu: " + e.getMessage(), "Lỗi SQL", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 
@@ -468,65 +515,46 @@ public class KhachHang_GUI extends JFrame implements ActionListener {
             return;
         }
 
-        String ngayDangKyStr = txtNgayDangKy.getText().trim();
-        String diemTichLuyStr = txtDiemTichLuy.getText().trim();
-        String hangThanhVienStr = txtHangThanhVien.getText().trim();
-        String soLanMuaHangStr = txtSoLanMuaHang.getText().trim();
         String hoTen = txtHoTen.getText().trim();
         String sdt = txtSdt.getText().trim();
         String email = txtEmail.getText().trim();
-        String namSinhStr = txtNamSinh.getText().trim();
+        Date namSinhDate = txtNamSinh.getDate();  // Get date from JDateChooser
+        Date ngayDangKyDate = txtNgayDangKy.getDate();  // Get date from JDateChooser
+        String diaChi = txtDiaChi.getText().trim();
+        String diemTichLuyStr = txtDiemTichLuy.getText().trim();
+        String hangThanhVienStr = txtHangThanhVien.getText().trim();
+        String soLanMuaHangStr = txtSoLanMuaHang.getText().trim();
         String maNV = txtMaNV.getText().trim();
 
-        if (ngayDangKyStr.isEmpty() || diemTichLuyStr.isEmpty() ||
-            hangThanhVienStr.isEmpty() || soLanMuaHangStr.isEmpty() || hoTen.isEmpty() ||
-            sdt.isEmpty() || email.isEmpty() || namSinhStr.isEmpty() || maNV.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Vui lòng điền đầy đủ thông tin.", "Lỗi nhập liệu", JOptionPane.WARNING_MESSAGE);
+        // Validate input
+        if (!validData(ma, hoTen, sdt, email, namSinhDate, ngayDangKyDate, diaChi, diemTichLuyStr, hangThanhVienStr, soLanMuaHangStr, maNV)) {
             return;
         }
 
-        Date ngayDangKySql = null;
-        Date namSinhSql = null;
-        int diemTichLuy = 0, hangThanhVien = 0, soLanMuaHang = 0;
-
-        try {
-            java.util.Date ngayDKUtil = dateFormat.parse(ngayDangKyStr);
-            ngayDangKySql = new java.sql.Date(ngayDKUtil.getTime());
-
-            java.util.Date namSinhUtil = dateFormat.parse(namSinhStr);
-            namSinhSql = new java.sql.Date(namSinhUtil.getTime());
-
-            diemTichLuy = Integer.parseInt(diemTichLuyStr);
-            hangThanhVien = Integer.parseInt(hangThanhVienStr);
-            soLanMuaHang = Integer.parseInt(soLanMuaHangStr);
-        } catch (ParseException e) {
-            JOptionPane.showMessageDialog(this, "Sai định dạng ngày (yyyy-MM-dd)", "Lỗi định dạng", JOptionPane.WARNING_MESSAGE);
-            return;
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Điểm, hạng hoặc số lần phải là số", "Lỗi định dạng", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
+        java.sql.Date ngayDangKySql = new java.sql.Date(ngayDangKyDate.getTime());
+        java.sql.Date namSinhSql = new java.sql.Date(namSinhDate.getTime());
 
         KhachHang khachHangCapNhat = new KhachHang(
-            ma, ngayDangKySql, diemTichLuy, hangThanhVien, soLanMuaHang,
-            hoTen, sdt, email, namSinhSql, maNV
+            ma, hoTen, sdt, email, namSinhSql, diaChi,
+            ngayDangKySql, Integer.parseInt(diemTichLuyStr), Integer.parseInt(hangThanhVienStr), Integer.parseInt(soLanMuaHangStr), maNV
         );
 
         try {
             boolean success = khachHangDAO.update(khachHangCapNhat);
             if (success) {
-                JOptionPane.showMessageDialog(this, "Cập nhật thông tin khách hàng thành công.", "Thành công", JOptionPane.INFORMATION_MESSAGE);
-                loadCustomerData(); 
-                clearFields();     
+                JOptionPane.showMessageDialog(this, "Cập nhật thông tin khách hàng thành công!", "Thành công", JOptionPane.INFORMATION_MESSAGE);
+                loadCustomerData(); // Refresh table
+                clearFields();      // Clear fields and reset buttons
             } else {
-                JOptionPane.showMessageDialog(this, "Cập nhật thất bại. Khách hàng không tồn tại.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Cập nhật thất bại. Khách hàng với mã '" + ma + "' không còn tồn tại.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                loadCustomerData(); // Refresh table to show current state
+                clearFields();
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Lỗi SQL khi cập nhật: " + e.getMessage(), "Lỗi SQL", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Lỗi SQL khi cập nhật khách hàng: " + e.getMessage(), "Lỗi SQL", JOptionPane.ERROR_MESSAGE);
         }
     }
-
    private void xoa() {
        int selectedRow = tableKhachHang.getSelectedRow();
        if (selectedRow == -1) {
