@@ -13,8 +13,10 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class NhanVien_GUI extends JPanel implements ActionListener{
     private JTable table;
@@ -128,8 +130,11 @@ public class NhanVien_GUI extends JPanel implements ActionListener{
 			// TODO: handle exception
 			e.printStackTrace();
 		}
+    	Locale localeVN = new Locale("vi", "VN");
+        NumberFormat fmt = NumberFormat.getCurrencyInstance(localeVN);
     	for(NhanVien x:dsNV) {
-    		String[] s = {x.getMa(),x.getHoTen(),x.getSdt(),x.getEmail(),String.valueOf(x.getNamSinh()),String.valueOf(x.getDiaChi()),String.valueOf(x.getNgayVaoLam()),String.valueOf(x.getLuong()),String.valueOf(x.getCaLam()),x.getMaNQL(),x.getMaTK()};
+    		String luongfommat = fmt.format(x.getLuong());
+    		String[] s = {x.getMa(),x.getHoTen(),x.getSdt(),x.getEmail(),String.valueOf(x.getNamSinh()),String.valueOf(x.getDiaChi()),String.valueOf(x.getNgayVaoLam()),luongfommat,String.valueOf(x.getCaLam()),x.getMaNQL(),x.getMaTK()};
     		model.addRow(s);
     	}
     }

@@ -5,11 +5,11 @@ import java.sql.Date;
 public class NhanVien extends Nguoi{
     private Date ngayVaoLam;
     private double luong;
-    private Date caLam;
+    private String caLam;
     private String maNQL;
     private String maTK;
 	public NhanVien(String ma, String hoTen, String sdt, String email, Date namSinh, String diaChi, Date ngayVaoLam,
-			double luong, Date caLam, String maNQL, String maTK) {
+			double luong, String caLam, String maNQL, String maTK) {
 		super(ma, hoTen, sdt, email, namSinh, diaChi);
 		this.ngayVaoLam = ngayVaoLam;
 		this.luong = luong;
@@ -26,7 +26,7 @@ public class NhanVien extends Nguoi{
 	public double getLuong() {
 		return luong;
 	}
-	public Date getCaLam() {
+	public String getCaLam() {
 		return caLam;
 	}
 	public String getMaNQL() {
@@ -41,7 +41,7 @@ public class NhanVien extends Nguoi{
 	public void setLuong(double luong) {
 		this.luong = luong;
 	}
-	public void setCaLam(Date caLam) {
+	public void setCaLam(String caLam) {
 		this.caLam = caLam;
 	}
 	public void setMaNQL(String maNQL) {

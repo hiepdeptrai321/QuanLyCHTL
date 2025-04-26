@@ -20,7 +20,7 @@ public class NhanVien_DAO {
             ps.setString(1, nv.getMa());
             ps.setDate(2, new java.sql.Date(nv.getNgayVaoLam().getTime()));
             ps.setDouble(3, nv.getLuong());
-            ps.setDate(4, new java.sql.Date(nv.getCaLam().getTime()));
+            ps.setString(4, nv.getCaLam());
             ps.setString(5, nv.getHoTen());
             ps.setString(6, nv.getSdt());
             ps.setString(7, nv.getEmail());
@@ -37,7 +37,7 @@ public class NhanVien_DAO {
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setDate(1, new java.sql.Date(nv.getNgayVaoLam().getTime()));
             ps.setDouble(2, nv.getLuong());
-            ps.setDate(3, new java.sql.Date(nv.getCaLam().getTime()));
+            ps.setString(4, nv.getCaLam());
             ps.setString(4, nv.getHoTen());
             ps.setString(5, nv.getSdt());
             ps.setString(6, nv.getEmail());
@@ -68,7 +68,7 @@ public class NhanVien_DAO {
                 nv.setMa(rs.getString("ma"));
                 nv.setNgayVaoLam(rs.getDate("ngayVaoLam"));
                 nv.setLuong(rs.getDouble("luong"));
-                nv.setCaLam(rs.getDate("caLam"));
+                nv.setCaLam(rs.getString("caLam"));
                 nv.setHoTen(rs.getString("hoTen"));
                 nv.setSdt(rs.getString("SDT"));
                 nv.setEmail(rs.getString("email"));
@@ -91,7 +91,7 @@ public class NhanVien_DAO {
                 nv.setMa(rs.getString("ma"));
                 nv.setNgayVaoLam(rs.getDate("ngayVaoLam"));
                 nv.setLuong(rs.getDouble("luong"));
-                nv.setCaLam(rs.getDate("caLam"));
+                nv.setCaLam(rs.getString("caLam"));
                 nv.setHoTen(rs.getString("hoTen"));
                 nv.setSdt(rs.getString("SDT"));
                 nv.setEmail(rs.getString("email"));
@@ -117,7 +117,7 @@ public class NhanVien_DAO {
                 nv.setMa(rs.getString("ma"));
                 nv.setNgayVaoLam(rs.getDate("ngayVaoLam"));
                 nv.setLuong(rs.getDouble("luong"));
-                nv.setCaLam(rs.getDate("caLam"));
+                nv.setCaLam(rs.getString("caLam"));
                 nv.setHoTen(rs.getString("hoTen"));
                 nv.setSdt(rs.getString("SDT"));
                 nv.setEmail(rs.getString("email"));
