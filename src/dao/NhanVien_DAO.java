@@ -81,6 +81,29 @@ public class NhanVien_DAO {
             return null;
         }
     }
+    public NhanVien getByTK(String maTK) throws SQLException {
+        String sql = "SELECT * FROM NhanVien WHERE maTK=?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, maTK);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                NhanVien nv = new NhanVien();
+                nv.setMa(rs.getString("ma"));
+                nv.setNgayVaoLam(rs.getDate("ngayVaoLam"));
+                nv.setLuong(rs.getDouble("luong"));
+                nv.setCaLam(rs.getDate("caLam"));
+                nv.setHoTen(rs.getString("hoTen"));
+                nv.setSdt(rs.getString("SDT"));
+                nv.setEmail(rs.getString("email"));
+                nv.setNamSinh(rs.getDate("namSinh"));
+                nv.setDiaChi(rs.getString("diaChi"));
+                nv.setMaNQL(rs.getString("maNQL"));
+                nv.setMaTK(rs.getString("maTK"));
+                return nv;
+            }
+            return null;
+        }
+    }
 
     public List<NhanVien> getAll() throws SQLException {
     	ConnectDB.getInstance();

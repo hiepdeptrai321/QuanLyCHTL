@@ -2,13 +2,13 @@ package entity;
 
 import java.sql.Date;
 
-public class NguoiQuanLy extends Nguoi{
-    private int capBac;
+public class NguoiQuanLy extends NhanVien{
+    private String capBac;
     private double phuCap;
     private String maTK;
-	public NguoiQuanLy(String ma, String hoTen, String sdt, String email, Date namSinh, String diaChi, int capBac,
+	public NguoiQuanLy(String ma, String hoTen, String sdt, String email, Date namSinh, String diaChi, String capBac,
 			double phuCap, String maTK) {
-		super(ma, hoTen, sdt, email, namSinh, diaChi);
+		super(ma, hoTen, sdt, email, namSinh, diaChi, namSinh, phuCap, namSinh, maTK, maTK);
 		this.capBac = capBac;
 		this.phuCap = phuCap;
 		this.maTK = maTK;
@@ -16,7 +16,7 @@ public class NguoiQuanLy extends Nguoi{
 	public NguoiQuanLy() {
 		super();
 	}
-	public int getCapBac() {
+	public String getCapBac() {
 		return capBac;
 	}
 	public double getPhuCap() {
@@ -25,7 +25,7 @@ public class NguoiQuanLy extends Nguoi{
 	public String getMaTK() {
 		return maTK;
 	}
-	public void setCapBac(int capBac) {
+	public void setCapBac(String capBac) {
 		this.capBac = capBac;
 	}
 	public void setPhuCap(double phuCap) {

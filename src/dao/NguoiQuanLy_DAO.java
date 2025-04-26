@@ -16,7 +16,7 @@ public class NguoiQuanLy_DAO {
         String sql = "INSERT INTO NguoiQuanLy (ma, capBac, phuCap, hoTen, sdt, email, namSinh, diaChi, maTK) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, nql.getMa());
-            ps.setInt(2, nql.getCapBac());
+            ps.setString(2, nql.getCapBac());
             ps.setDouble(3, nql.getPhuCap());
             ps.setString(4, nql.getHoTen());
             ps.setString(5, nql.getSdt());
@@ -31,7 +31,7 @@ public class NguoiQuanLy_DAO {
     public boolean update(NguoiQuanLy nql) throws SQLException {
         String sql = "UPDATE NguoiQuanLy SET capBac=?, phuCap=?, hoTen=?, sdt=?, email=?, namSinh=?, diaChi=?, maTK=? WHERE ma=?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, nql.getCapBac());
+            ps.setString(1, nql.getCapBac());
             ps.setDouble(2, nql.getPhuCap());
             ps.setString(3, nql.getHoTen());
             ps.setString(4, nql.getSdt());
@@ -60,7 +60,28 @@ public class NguoiQuanLy_DAO {
             if (rs.next()) {
                 NguoiQuanLy nql = new NguoiQuanLy();
                 nql.setMa(rs.getString("ma"));
-                nql.setCapBac(rs.getInt("capBac"));
+                nql.setCapBac(rs.getString("capBac"));
+                nql.setPhuCap(rs.getDouble("phuCap"));
+                nql.setHoTen(rs.getString("hoTen"));
+                nql.setSdt(rs.getString("sdt"));
+                nql.setEmail(rs.getString("email"));
+                nql.setNamSinh(rs.getDate("namSinh"));
+                nql.setDiaChi(rs.getString("diaChi"));
+                nql.setMaTK(rs.getString("maTK"));
+                return nql;
+            }
+            return null;
+        }
+    }
+    public NguoiQuanLy getByTK(String maTK) throws SQLException {
+        String sql = "SELECT * FROM NguoiQuanLy WHERE maTK=?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, maTK);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                NguoiQuanLy nql = new NguoiQuanLy();
+                nql.setMa(rs.getString("ma"));
+                nql.setCapBac(rs.getString("capBac"));
                 nql.setPhuCap(rs.getDouble("phuCap"));
                 nql.setHoTen(rs.getString("hoTen"));
                 nql.setSdt(rs.getString("sdt"));
@@ -82,7 +103,7 @@ public class NguoiQuanLy_DAO {
             while (rs.next()) {
                 NguoiQuanLy nql = new NguoiQuanLy();
                 nql.setMa(rs.getString("ma"));
-                nql.setCapBac(rs.getInt("capBac"));
+                nql.setCapBac(rs.getString("capBac"));
                 nql.setPhuCap(rs.getDouble("phuCap"));
                 nql.setHoTen(rs.getString("hoTen"));
                 nql.setSdt(rs.getString("sdt"));
