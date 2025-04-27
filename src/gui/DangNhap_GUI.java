@@ -145,7 +145,7 @@ public class DangNhap_GUI extends JFrame implements ActionListener {
 	            	e1.printStackTrace();
             	}
         	}
-            new TrangChu_GUI();
+            new TrangChu_GUI(); 
             
             this.setVisible(false);
         }

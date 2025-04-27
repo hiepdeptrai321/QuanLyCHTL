@@ -1178,7 +1178,7 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
              JOptionPane.showMessageDialog(this, "Vui lòng chọn một hóa đơn để xem chi tiết.");
          }
     }
-
+ 
 
     @Override
     public void actionPerformed(ActionEvent e) {
