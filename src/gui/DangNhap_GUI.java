@@ -43,16 +43,35 @@ public class DangNhap_GUI extends JFrame implements ActionListener {
         JLabel lblImage = new JLabel(new ImageIcon(img));
 
         // ================================ Panel phải - form đăng nhập
+        JPanel pnlAll = new JPanel() {
+            private ImageIcon backgroundIcon = new ImageIcon(getClass().getResource("/Vie Viet Nam GIF by Lucky Kat Studios.gif"));
+
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                // Vẽ hình động nền
+                g.drawImage(backgroundIcon.getImage(), 0, 0, getWidth(), getHeight(), this);
+            }
+        };
+        pnlAll.setLayout(new BorderLayout());
+        
+        pnlAll.setBorder(BorderFactory.createEmptyBorder(100, 0, 50, 0));
         Box pnlForm = Box.createVerticalBox();
         pnlForm.setPreferredSize(new Dimension(400, 600));
-        pnlForm.setBorder(BorderFactory.createEmptyBorder(180, 40, 180, 30));
+        pnlForm.setBorder(BorderFactory.createEmptyBorder(0, 40, 100, 30));
 
+     // Panel hình ảnh	
+        ImageIcon iconLogo = new ImageIcon(getClass().getResource("/logo.png"));
+        Image imgLogo = iconLogo.getImage().getScaledInstance(230, 130, Image.SCALE_SMOOTH);
+        JLabel lblLogo = new JLabel(new ImageIcon(imgLogo));
+        
         // Panel nhập tên đăng nhập
         JLabel lblUserLabel = new JLabel("Tên đăng nhập:");
         txtUser = new JTextField(25);
         JPanel pnl1 = new JPanel(new FlowLayout(FlowLayout.LEFT));
         pnl1.add(lblUserLabel);
         pnl1.add(txtUser);
+        pnl1.setOpaque(false);
 
         // Panel nhập mật khẩu
         JLabel lblPassLabel = new JLabel("Mật khẩu:");
@@ -61,6 +80,7 @@ public class DangNhap_GUI extends JFrame implements ActionListener {
         pnl2.add(lblPassLabel);
         pnl2.add(txtPass);
         txtPass.addActionListener(this); 
+        pnl2.setOpaque(false);
 
         // Nút đăng nhập
         JButton btnLogin = new JButton("Đăng nhập");
@@ -74,19 +94,20 @@ public class DangNhap_GUI extends JFrame implements ActionListener {
         lblError.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         // Thêm các thành phần vào form
-        pnlForm.add(Box.createVerticalGlue());
         pnlForm.add(pnl1);
         pnlForm.add(pnl2);
         pnlForm.add(Box.createVerticalStrut(10));
         pnlForm.add(btnLogin);
         pnlForm.add(Box.createVerticalStrut(10));
         pnlForm.add(lblError);
-        pnlForm.add(Box.createVerticalGlue());
-
+        pnlAll.add(lblLogo,BorderLayout.NORTH);
+        pnlAll.add(pnlForm, BorderLayout.CENTER);
+        pnlAll.setOpaque(false);
+       
+        
         // Thêm vào giao diện chính
         add(lblImage, BorderLayout.WEST);
-        add(pnlForm, BorderLayout.CENTER);
-        
+        add(pnlAll, BorderLayout.CENTER);
         try {
            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
                if ("Nimbus".equals(info.getName())) {
@@ -154,7 +175,7 @@ public class DangNhap_GUI extends JFrame implements ActionListener {
             this.setVisible(false);
         }
     }
-
+    
     public static void main(String[] args) {
         try {
             for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
