@@ -877,10 +877,10 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
              NhanVien nvhh = new NhanVien();
              try {
 				nvhh = nvdao.getById(DangNhap_GUI.MaQLTemp);
-			} catch (SQLException e) {
+             } catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
+             }
              hoaDonMoi.setNv(nvhh);
              hoaDonMoi.setKh(khachHangHienTai); 
              hoaDonMoi.setQuay(1);
@@ -900,9 +900,9 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
               hoaDonMoi.setTongSoLuongSP(tongSoLuong);
 
 
-             // 4. Tạo danh sách ChiTietHoaDon hoàn chỉnh (gán Hóa đơn vào)
-             List<ChiTietHoaDon> dsChiTietFinal = new ArrayList<>();
-             for (int i = 0; i < modelChiTietTaoHD.getRowCount(); i++) {
+              // 4. Tạo danh sách ChiTietHoaDon hoàn chỉnh (gán Hóa đơn vào)
+              List<ChiTietHoaDon> dsChiTietFinal = new ArrayList<>();
+              for (int i = 0; i < modelChiTietTaoHD.getRowCount(); i++) {
                   String maSP = modelChiTietTaoHD.getValueAt(i, 1).toString();
                   int soLuong = (int) modelChiTietTaoHD.getValueAt(i, 3);
                   double donGia = (double) modelChiTietTaoHD.getValueAt(i, 4);
@@ -928,6 +928,17 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
              if (success) {
                   JOptionPane.showMessageDialog(panelTaoHoaDon, "Thanh toán và lưu hóa đơn thành công!\nMã HĐ: " + maHDMoi, "Thành công", JOptionPane.INFORMATION_MESSAGE);
                   resetTaoHoaDonTab();
+                  try {
+                      HoaDon hdSelected = hoaDonDAO.getById(hoaDonMoi.getMaHD());
+                      if (hdSelected != null) {
+                           // --- Mở Dialog Chi tiết Hóa đơn ---
+                           ChiTietHoaDon_GUI dialog = new ChiTietHoaDon_GUI(this, hdSelected); 
+                           dialog.setVisible(true);
+                      }
+                   } catch(SQLException ex) {
+                        JOptionPane.showMessageDialog(this, "Lỗi khi lấy chi tiết hóa đơn: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+                        ex.printStackTrace();
+                   }
              } else {
                   JOptionPane.showMessageDialog(panelTaoHoaDon, "Lưu hóa đơn thất bại!", "Lỗi", JOptionPane.ERROR_MESSAGE);
              }

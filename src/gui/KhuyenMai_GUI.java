@@ -1,9 +1,7 @@
 package gui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -18,7 +16,6 @@ import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -28,7 +25,6 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
@@ -198,6 +194,8 @@ public class KhuyenMai_GUI extends JPanel implements ActionListener {
         txtMaNQL = new JTextArea(1, 20); // Using JTextArea, consider JTextField if always short
         JScrollPane scrollMaNQL = new JScrollPane(txtMaNQL); // Keep scroll pane
         panelRight.add(scrollMaNQL, gbc);
+        txtMaNQL.setText(DangNhap_GUI.MaQLTemp);
+        txtMaNQL.setEditable(false);
 
 
         // Row 9: Buttons Panel (Moved btnThem here, removed btnLuu)
@@ -342,7 +340,7 @@ public class KhuyenMai_GUI extends JPanel implements ActionListener {
         dateChooserNgayKetThuc.setEnabled(editable);
         txtSanPhamApDung.setEditable(editable);
         txtMoTa.setEditable(editable);
-        txtMaNQL.setEditable(editable);
+        txtMaNQL.setEditable(false);
     }
     
     public boolean validData() {
@@ -351,11 +349,8 @@ public class KhuyenMai_GUI extends JPanel implements ActionListener {
         String mucGiamStr = txtMucGiamGia.getText().trim();
         Date ngayBD = dateChooserNgayBatDau.getDate();
         Date ngayKT = dateChooserNgayKetThuc.getDate();
-        String spApDung = txtSanPhamApDung.getText().trim();
-        String moTa = txtMoTa.getText().trim();
-        String maNQL = txtMaNQL.getText().trim();
-        if (maKM.isEmpty() || tenKM.isEmpty() || mucGiamStr.isEmpty() || ngayBD == null || ngayKT == null || maNQL.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin bắt buộc (Mã, Tên, Mức giảm, Ngày BĐ/KT, Mã NQL)."); return false;
+        if (maKM.isEmpty() || tenKM.isEmpty() || mucGiamStr.isEmpty() || ngayBD == null || ngayKT == null ) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin bắt buộc (Mã, Tên, Mức giảm, Ngày BĐ/KT)."); return false;
         }
         float mucGiam;
         try {
@@ -377,7 +372,7 @@ public class KhuyenMai_GUI extends JPanel implements ActionListener {
         Date ngayKT = dateChooserNgayKetThuc.getDate();
         String spApDung = txtSanPhamApDung.getText().trim();
         String moTa = txtMoTa.getText().trim();
-        String maNQL = txtMaNQL.getText().trim();
+        String maNQL = DangNhap_GUI.MaQLTemp;
         KhuyenMai km = new KhuyenMai(maKM, tenKM, mucGiamStr, ngayBD, ngayKT, moTa, spApDung, maNQL);
         return km;
     }

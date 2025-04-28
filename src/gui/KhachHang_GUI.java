@@ -87,24 +87,6 @@ public class KhachHang_GUI extends JPanel implements ActionListener {
              btnXoa.setEnabled(false);
         }
     }
-    public static void main(String[] args) {
-        // Chạy giao diện trên Event Dispatch Thread (EDT)
-        SwingUtilities.invokeLater(() -> {
-        	JFrame frame = new JFrame("Quản Lý Khách Hàng"); 
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
-
-            // 2. Tạo JPanel KhachHang_GUI
-            KhachHang_GUI khachHangPanel = new KhachHang_GUI();
-
-            frame.add(khachHangPanel);
-
-            int dai = 1400; 
-            int rong = 800; 
-            frame.setSize(dai, rong);
-            frame.setLocationRelativeTo(null);
-            frame.setVisible(true); 
-        });
-    }
 
     private void initComponents() {
         this.setLayout(new BorderLayout());
@@ -451,7 +433,7 @@ public class KhachHang_GUI extends JPanel implements ActionListener {
         btnXoa.addActionListener(this);
         btnXoaTrang.addActionListener(this);
         btnSearch.addActionListener(this);
-
+        txtSearch.addActionListener(this);
 
         return panel;
     }
@@ -628,7 +610,7 @@ public class KhachHang_GUI extends JPanel implements ActionListener {
         	xoa();
         else if(o == btnXoaTrang)
         	xoatrang();
-        else if (o == btnSearch) { 
+        else if (o == btnSearch || o == txtSearch) { 
         	String searchText = txtSearch.getText().trim();
             if (!searchText.isEmpty()) {
                 searchCustomers(searchText); 

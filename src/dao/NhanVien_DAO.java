@@ -4,6 +4,8 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 import connectDB.ConnectDB;
 import entity.NhanVien;
 
@@ -16,6 +18,10 @@ public class NhanVien_DAO {
 	}
 
 	public boolean insert(NhanVien nv) throws SQLException {
+		if (KiemMaDaTonTaiChua(nv.getMa())) {
+			JOptionPane.showMessageDialog(null, "Mã nhân viên đã tồn tại!");
+	        return false;
+	    }
 	    String sql = "{call sp_InsertNhanVien(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}";
 	    try (CallableStatement cs = conn.prepareCall(sql)) {
 	        cs.setString(1, nv.getMa());
@@ -31,6 +37,19 @@ public class NhanVien_DAO {
 	        cs.setString(11, nv.getMaTK());
 	        return cs.executeUpdate() > 0;
 	    }
+	}
+	
+	public boolean KiemMaDaTonTaiChua(String ma) throws SQLException {
+	    String sql = "SELECT COUNT(*) FROM NhanVien WHERE ma = ?";
+	    try (PreparedStatement ps = conn.prepareStatement(sql)) {
+	        ps.setString(1, ma);
+	        try (ResultSet rs = ps.executeQuery()) {
+	            if (rs.next()) {
+	                return rs.getInt(1) > 0;
+	            }
+	        }
+	    }
+	    return false;
 	}
 
 	public boolean update(NhanVien nv) throws SQLException {
@@ -83,7 +102,7 @@ public class NhanVien_DAO {
         }
     }
     
-    public NhanVien getByTK(String maTK) throws SQLException {
+    public NhanVien getTKbangMaTK(String maTK) throws SQLException {
         String sql = "{call sp_GetNhanVienByTK(?)}";
         try (CallableStatement cs = conn.prepareCall(sql)) {
             cs.setString(1, maTK);
