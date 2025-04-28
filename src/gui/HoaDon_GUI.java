@@ -15,6 +15,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.io.File;
 import java.util.Date;
 import java.sql.SQLException;
 import java.text.NumberFormat;
@@ -31,6 +32,7 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -52,6 +54,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellEditor;
@@ -61,6 +64,7 @@ import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableRowSorter;
 
 import connectDB.ConnectDB;
+import dao.ChiTietHoaDon_DAO;
 import dao.HoaDon_DAO;
 import dao.KhachHang_DAO;
 import dao.NhanVien_DAO;
@@ -70,6 +74,7 @@ import entity.HoaDon;
 import entity.KhachHang;
 import entity.NhanVien;
 import entity.SanPham;
+import entity.XuatHoaDonPDF;
 
 
 public class HoaDon_GUI extends JPanel implements ActionListener {
@@ -120,6 +125,7 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
     private SanPham_DAO sanPhamDAO;
     private KhachHang_DAO khachHangDAO;
     private KhachHang khachHangHienTai;
+    private ChiTietHoaDon_DAO cthdDAO;
 	private List<ChiTietHoaDon> dsChiTietHoaDonTam = new ArrayList<ChiTietHoaDon>();
 	private JButton btnXuatHD;
 
@@ -128,6 +134,7 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
 		hoaDonDAO = new HoaDon_DAO(ConnectDB.getConnection());
 		sanPhamDAO = new SanPham_DAO(ConnectDB.getConnection());
 		khachHangDAO = new KhachHang_DAO(ConnectDB.getConnection());
+		cthdDAO = new ChiTietHoaDon_DAO(ConnectDB.getConnection());
 		currentHoaDonList = new ArrayList<>();
 
         setSize(1200, 700);
@@ -261,7 +268,7 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
         btnChiTiet = new JButton("Xem chi tiết");
         btnChiTiet.setPreferredSize(new Dimension(200, 35));
         btnXuatHD = new JButton("Xuất hóa đơn");
-        btnChiTiet.setPreferredSize(new Dimension(200, 35));
+        btnXuatHD.setPreferredSize(new Dimension(200, 35));
         panelSouth.add(btnChiTiet);
         panelSouth.add(btnXuatHD);
 
@@ -1209,6 +1216,53 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
              JOptionPane.showMessageDialog(this, "Vui lòng chọn một hóa đơn để xem chi tiết.");
          }
     }
+
+    private void handleXuatHoaDon() {
+        int selectedRow = tableHoaDon.getSelectedRow();
+        if (selectedRow != -1) { // Kiểm tra xem có dòng nào được chọn không
+            // Chuyển đổi chỉ số dòng trên giao diện sang chỉ số dòng trong model
+            // (quan trọng nếu bảng có bật sắp xếp/lọc)
+            int modelRow = tableHoaDon.convertRowIndexToModel(selectedRow);
+            String maHD = modelHoaDon.getValueAt(modelRow, 0).toString(); // Lấy mã hóa đơn
+
+            try {
+                HoaDon hdSelected = hoaDonDAO.getById(maHD); 
+                List<ChiTietHoaDon> chiTietHD = cthdDAO.getByMaHD(maHD);
+                if (hdSelected != null && chiTietHD != null && !chiTietHD.isEmpty()) {
+                    JFileChooser fileChooser = new JFileChooser();
+                    //Tạo  thư mục mặc định
+                    File defaultDirectory = new File("./DSHoaDonPDF");
+                    fileChooser.setCurrentDirectory(defaultDirectory);
+                    
+                    fileChooser.setDialogTitle("Chọn nơi lưu file PDF hóa đơn");
+                    fileChooser.setSelectedFile(new java.io.File("HoaDon_" + maHD + ".pdf"));
+                    fileChooser.setFileFilter(new FileNameExtensionFilter("PDF Files (*.pdf)", "pdf"));
+                    int userSelection = fileChooser.showSaveDialog(this); 
+                    if (userSelection == JFileChooser.APPROVE_OPTION) {
+                        String filePath = fileChooser.getSelectedFile().getAbsolutePath();
+                         if (!filePath.toLowerCase().endsWith(".pdf")) {
+                            filePath += ".pdf";
+                         }
+                        XuatHoaDonPDF exporter = new XuatHoaDonPDF();
+                        boolean success = exporter.xuatHoaDon(hdSelected, chiTietHD, filePath);
+                    } else {
+                        System.out.println("Người dùng đã hủy thao tác lưu file."); 
+                    }
+
+                } else {
+                    JOptionPane.showMessageDialog(this, "Không thể lấy đủ thông tin chi tiết cho hóa đơn " + maHD + " để xuất.", "Lỗi dữ liệu", JOptionPane.WARNING_MESSAGE);
+                }
+            } catch (SQLException ex) {
+                 JOptionPane.showMessageDialog(this, "Lỗi CSDL khi lấy thông tin hóa đơn để xuất PDF: " + ex.getMessage(), "Lỗi CSDL", JOptionPane.ERROR_MESSAGE);
+                 ex.printStackTrace(); 
+            } catch (Exception ex) {
+                  JOptionPane.showMessageDialog(this, "Lỗi không xác định khi chuẩn bị xuất PDF: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+                  ex.printStackTrace();
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn một hóa đơn từ danh sách để xuất file PDF.");
+        }
+    }
  
 
     @Override
@@ -1216,14 +1270,16 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
         Object o = e.getSource();
         if (tabbedPane.getSelectedComponent() == panelDanhSach) {
             if (o.equals(btnTimKiem)) {
-                handleTimKiem(); // Cần try-catch nếu hàm này throws SQLException
+                handleTimKiem(); 
             } else if (o.equals(btnApDung)) {
                 handleApDungLoc();
             } else if (o.equals(btnHuyLoc)) {
                 handleHuyLoc();
             } else if (o.equals(btnChiTiet)) {
                 handleXemChiTiet();
-            }
+            } else if (o.equals(btnXuatHD)) {
+                handleXuatHoaDon();
+          }
         }
         else if (tabbedPane.getSelectedComponent() == panelTaoHoaDon) {
              if (o.equals(btnThemSP) || o.equals(txtMaSPEntry)) {
@@ -1238,7 +1294,7 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
                   handleThanhToan();
              } else if (o.equals(btnHuyHoaDon)) {
                   handleHuyHoaDon();
-             }
+             } 
         }
     }
 
