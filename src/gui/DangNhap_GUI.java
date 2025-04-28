@@ -143,7 +143,7 @@ public class DangNhap_GUI extends JFrame implements ActionListener {
         	else {
             	try {
             		MaQLTemp = tkTemp.getMaTK();
-            		nhanVienHienHanh = nv.getByTK(tkTemp.getMaTK());
+            		nhanVienHienHanh = nv.getTKbangMaTK(tkTemp.getMaTK());
             	} catch (SQLException e1) {
 	            	// TODO Auto-generated catch block
 	            	e1.printStackTrace();
