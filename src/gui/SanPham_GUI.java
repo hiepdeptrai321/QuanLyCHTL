@@ -33,6 +33,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.RowSorter;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
@@ -108,22 +109,7 @@ public class SanPham_GUI extends JPanel implements ActionListener, MouseListener
              // btnXoaTrang vẫn có thể giữ lại để xóa trắng các trường đã nhập (nếu có)
         }
     }
-    public static void main(String[] args) {
-        // Chạy giao diện trên Event Dispatch Thread (EDT)
-        SwingUtilities.invokeLater(() -> {
-        	JFrame frame = new JFrame("Quản Lý Sản Phẩm"); 
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-            SanPham_GUI sanPhamPanel = new SanPham_GUI();
-
-            frame.add(sanPhamPanel); // Thêm panel vào content pane mặc định của frame
-
-            // 4. Đặt các thuộc tính khác cho JFrame và hiển thị
-            frame.setSize(1200, 700); 
-            frame.setLocationRelativeTo(null); 
-            frame.setVisible(true); 
-        });
-    }
 
     private void initComponents() {
         // Main Panel with BorderLayout
@@ -284,6 +270,10 @@ public class SanPham_GUI extends JPanel implements ActionListener, MouseListener
 
         // Hành động khi nhấn nút Reset
         btnReset.addActionListener(e -> {
+            RowSorter<?> sorter = tableSanPham.getRowSorter();
+            if (sorter instanceof TableRowSorter) {
+                ((TableRowSorter<?>) sorter).setSortKeys(null);
+            }
             loadProductData();  // Tải lại dữ liệu ban đầu vào bảng
         });
 
@@ -440,6 +430,8 @@ public class SanPham_GUI extends JPanel implements ActionListener, MouseListener
 
         panel.add(fieldsPanel, BorderLayout.CENTER); 
         panel.add(buttonPanel, BorderLayout.SOUTH); 
+        
+        txtMaNQL.setEditable(false);
 
         btnThem.addActionListener(this);
         btnSua.addActionListener(this);
@@ -473,7 +465,7 @@ public class SanPham_GUI extends JPanel implements ActionListener, MouseListener
          txtMaLoai.setEditable(editable);
          txtMaNH.setEditable(editable);
          txtMaNCC.setEditable(editable);
-         txtMaNQL.setEditable(editable);
+         txtMaNQL.setEditable(false);
          // txtMaSP is handled separately
     }
 
@@ -678,7 +670,6 @@ public class SanPham_GUI extends JPanel implements ActionListener, MouseListener
         Object selectedMaLoai = comboMaLoai.getSelectedItem();
         Object selectedMaNH = comboMaNH.getSelectedItem();
         Object selectedMaNCC = comboMaNCC.getSelectedItem();
-        String maNQL = txtMaNQL.getText().trim(); 
 
         if (maSP.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Mã Sản Phẩm không được để trống.", "Lỗi nhập liệu", JOptionPane.WARNING_MESSAGE);
@@ -748,17 +739,6 @@ public class SanPham_GUI extends JPanel implements ActionListener, MouseListener
             comboMaNCC.requestFocus();
             return false;
         }
-
-        if (maNQL.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Mã Người Quản Lý không được để trống.", "Lỗi nhập liệu", JOptionPane.WARNING_MESSAGE);
-            txtMaNQL.requestFocus();
-            return false;
-        }
-        if (!maNQL.matches("QL\\d+")) {
-            JOptionPane.showMessageDialog(this, "Mã Người Quản Lí phải bắt đầu bằng 'QL'", "Lỗi định dạng", JOptionPane.WARNING_MESSAGE);
-            txtMaNQL.requestFocus();
-            return false;
-        }
         
         try {
            double giaBan = Double.parseDouble(giaBanStr);
@@ -790,7 +770,7 @@ public class SanPham_GUI extends JPanel implements ActionListener, MouseListener
         String maLoai = comboMaLoai.getSelectedItem().toString();
         String maNH = comboMaNH.getSelectedItem().toString();
         String maNCC = comboMaNCC.getSelectedItem().toString();
-        String maNQL = txtMaNQL.getText().trim();
+        String maNQL = DangNhap_GUI.MaQLTemp;
 
         SanPham sanPhamMoi = new SanPham(maSP, tenSP, giaBan, giaGoc, maLoai, maNH, maNCC, maNQL);
 
@@ -849,7 +829,7 @@ public class SanPham_GUI extends JPanel implements ActionListener, MouseListener
         String maLoai = comboMaLoai.getSelectedItem().toString();
         String maNH = comboMaNH.getSelectedItem().toString();
         String maNCC = comboMaNCC.getSelectedItem().toString();
-        String maNQL = txtMaNQL.getText().trim();
+        String maNQL = DangNhap_GUI.MaQLTemp;
 
        
 

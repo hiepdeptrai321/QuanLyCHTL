@@ -19,7 +19,7 @@ public class DangNhap_GUI extends JFrame implements ActionListener {
     private JTextField txtUser;
     private JPasswordField txtPass;
     private JLabel lblError;
-	private TaiKhoan_DAO tk;
+	private TaiKhoan_DAO tk; 
 	private NhanVien_DAO nv;
 	private NguoiQuanLy_DAO ql;
 	public static String MaQLTemp;

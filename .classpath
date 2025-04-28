@@ -11,5 +11,11 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/sqljdbc42.jar"/>
 	<classpathentry kind="lib" path="lib/jcalendar-1.4.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-api-2.0.17.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-simple-2.0.17.jar"/>
+	<classpathentry kind="lib" path="lib/layout-7.2.5.jar"/>
+	<classpathentry kind="lib" path="lib/kernel-7.2.5.jar"/>
+	<classpathentry kind="lib" path="lib/io-7.2.5.jar"/>
+	<classpathentry kind="lib" path="lib/commons-9.1.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -206,7 +206,7 @@ public class NhanVien_GUI extends JPanel implements ActionListener,MouseListener
 	                NumberFormat fmt = NumberFormat.getCurrencyInstance(localeVN);
 	                
 	                for (NhanVien x : dsNV) {
-	                    if (!x.getMa().matches("^QL.*")) {
+	                    if (!x.getMa().matches("^NQL.*")) {
 	                        String[] s = {
 	                            x.getMa(),
 	                            x.getHoTen(),
@@ -290,6 +290,7 @@ public class NhanVien_GUI extends JPanel implements ActionListener,MouseListener
     
 //	thêm dữ liệu vào bảng
     private void LoadData() {
+    	model.setRowCount(0);
     	List<NhanVien> dsNV = new ArrayList<NhanVien>();
     	try {
     		dsNV = nhanVien_DAO.getAll();

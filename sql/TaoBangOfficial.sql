@@ -1,17 +1,17 @@
 ﻿create database QuanLyCHTL
 go
 use QuanLyCHTL
-
+go
 --drop database
-use master
-ALTER DATABASE QuanLyCHTL
-SET SINGLE_USER
-WITH ROLLBACK IMMEDIATE;
-GO
-drop database QuanLyCHTL
+--use master
+--ALTER DATABASE QuanLyCHTL
+--SET SINGLE_USER
+--WITH ROLLBACK IMMEDIATE;
+--GO
+--drop database QuanLyCHTL
 
 -- -----------------------------
--- T?O B?NG H? TH?NG C?A H�NG TI?N L?I
+-- Tạo bảng
 -- -----------------------------
 -- =============================
 -- CREATE TABLE STATEMENTS (Giữ nguyên như bạn cung cấp)
@@ -303,7 +303,7 @@ VALUES
 
 
 -- SanPham
-INSERT INTO SanPham (maSP, tenSP, giaBan, giaGoc, maNH, maLoai, maNCC, maNQL)
+INSERT INTO SanPham (maSP, tenSP, giaGoc, giaBan, maNH, maLoai, maNCC, maNQL)
 VALUES
 ('SP01', N'Coca-Cola lon 330ml', 9500, 11000, 'NH01', 'LSP01', 'NCC01', 'NQL01'),
 ('SP02', N'Pepsi chai 390ml', 9000, 10000, 'NH02', 'LSP01', 'NCC02', 'NQL01'),
