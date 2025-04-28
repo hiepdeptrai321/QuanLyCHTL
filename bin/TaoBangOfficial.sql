@@ -258,12 +258,11 @@ VALUES
 -- NguoiQuanLy
 INSERT INTO NguoiQuanLy (ma, capBac, phuCap, hoTen, sdt, email, namSinh, diaChi)
 VALUES
-('QL101', 'A1', 1100000, N'Đỗ Phú Hiệp', '0912345679', 'binh@gmail.com', '1990-02-02', N'2 Nguyễn Huệ')
 ('QL03', 'A1', 1000000, N'Đỗ Phú Hiệp', '0912345678', 'an@gmail.com', '2005-01-01', N'1 Lê Lợi'),
 ('QL04', 'A1', 1000000, N'Hoàng Phước Thành Công', '0912345678', 'an@gmail.com', '2005-01-01', N'1 Lê Lợi'),
 ('QL05', 'A1', 1000000, N'Đàm Thái An', '0912345678', 'an@gmail.com', '2005-01-01', N'1 Lê Lợi'),
 ('QL01', 'A1', 1000000, N'Nguyễn Văn An', '0912345678', 'an@gmail.com', '2005-01-01', N'1 Lê Lợi'),
-('QL02', 'A2', 1100000, N'Trần Thị Bình', '0912345679', 'binh@gmail.com', '1990-02-02', N'2 Nguyễn Huệ'),
+('QL02', 'A2', 1100000, N'Trần Thị Bình', '0912345679', 'binh@gmail.com', '1990-02-02', N'2 Nguyễn Huệ')
 
 
 -- SanPham
@@ -362,20 +361,3 @@ select * from [dbo].[NhanVien]
 select * from [dbo].[SanPham]
 select * from [dbo].[TaiKhoan] 
 
-CREATE PROCEDURE sp_InsertNhanVien
-    @ma NVARCHAR(10),
-    @ngayVaoLam DATE,
-    @luong FLOAT,
-    @caLam NVARCHAR(20),
-    @hoTen NVARCHAR(100),
-    @SDT NVARCHAR(20),
-    @email NVARCHAR(100),
-    @namSinh DATE,
-    @diaChi NVARCHAR(255),
-    @maNQL NVARCHAR(10),
-    @maTK NVARCHAR(10)
-AS
-BEGIN
-    INSERT INTO NhanVien (ma, ngayVaoLam, luong, caLam, hoTen, SDT, email, namSinh, diaChi, maNQL, maTK)
-    VALUES (@ma, @ngayVaoLam, @luong, @caLam, @hoTen, @SDT, @email, @namSinh, @diaChi, @maNQL, @maTK)
-END
