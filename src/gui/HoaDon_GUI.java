@@ -25,6 +25,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
+import javax.swing.AbstractButton;
 import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -128,6 +129,8 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
     private ChiTietHoaDon_DAO cthdDAO;
 	private List<ChiTietHoaDon> dsChiTietHoaDonTam = new ArrayList<ChiTietHoaDon>();
 	private JButton btnXuatHD;
+	private JComboBox<String> cbxThongKe;
+	private JButton btnThongKe;
 
     public HoaDon_GUI() {
         ConnectDB.getInstance().connect();
@@ -262,15 +265,30 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
 
         // --- Panel South: Chứa nút chức năng ---
         JPanel panelSouth = new JPanel();
-        panelSouth.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 5));
+        panelSouth.setLayout(new GridLayout(1,2));
+        JPanel panelSouthR = new JPanel();
+        JPanel panelSouthL = new JPanel();
+        panelSouth.add(panelSouthL);
+        panelSouth.add(panelSouthR);
+		panelSouthL.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        panelSouthR.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 5));
         panel.add(panelSouth, BorderLayout.SOUTH); // Thêm vào panel của tab
 
+        JLabel lbTK;
+		panelSouthL.add(lbTK = new JLabel("Tổng doanh thu theo "));
+		Font ft = new Font("TimeRomans", Font.BOLD, 13);
+		lbTK.setFont(ft);
+        String[] tieuChiTK = {"Ngày","Tháng","Năm"};
+        panelSouthL.add(cbxThongKe = new JComboBox<String>(tieuChiTK));
+        panelSouthL.add(btnThongKe = new JButton("Thống kê"));
+        
+        
         btnChiTiet = new JButton("Xem chi tiết");
         btnChiTiet.setPreferredSize(new Dimension(200, 35));
         btnXuatHD = new JButton("Xuất hóa đơn");
         btnXuatHD.setPreferredSize(new Dimension(200, 35));
-        panelSouth.add(btnChiTiet);
-        panelSouth.add(btnXuatHD);
+        panelSouthR.add(btnChiTiet);
+        panelSouthR.add(btnXuatHD);
 
         // --- Thêm sự kiện cho các nút trong tab này ---
         btnTimKiem.addActionListener(this);
@@ -278,6 +296,7 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
         btnApDung.addActionListener(this);
         btnHuyLoc.addActionListener(this);
         btnXuatHD.addActionListener(this);
+        btnThongKe.addActionListener(this);
 
         // Listener cho việc chọn dòng trên bảng 
          tableHoaDon.getSelectionModel().addListSelectionListener(e -> {
@@ -1274,6 +1293,46 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
             JOptionPane.showMessageDialog(this, "Vui lòng chọn một hóa đơn từ danh sách để xuất file PDF.");
         }
     }
+    
+    private void handleThongKe() {
+        String tieuChi = (String) cbxThongKe.getSelectedItem(); 
+        if (tieuChi == null) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn tiêu chí thống kê (Ngày/Tháng/Năm).", "Chưa chọn tiêu chí", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        List<Object[]> thongKeData = null;
+        try {
+            switch (tieuChi) {
+                case "Ngày":
+                     thongKeData = hoaDonDAO.getThongKeTheoNgay();
+                    break;
+                case "Tháng":
+                     thongKeData = hoaDonDAO.getThongKeTheoThang(); 
+                    break;
+                case "Năm":
+                     thongKeData = hoaDonDAO.getThongKeTheoNam();
+                    break;
+                default:
+                    JOptionPane.showMessageDialog(this, "Tiêu chí thống kê không hợp lệ: " + tieuChi, "Lỗi", JOptionPane.WARNING_MESSAGE);
+                    return;
+            }
+
+            if (thongKeData != null && !thongKeData.isEmpty()) {
+                JFrame owner = (JFrame) SwingUtilities.getWindowAncestor(this);
+                ThongKe_GUI dialog = new ThongKe_GUI(owner, tieuChi, thongKeData);
+                dialog.setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(this, "Không có dữ liệu thống kê cho tiêu chí: " + tieuChi, "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            }
+
+        } catch (SQLException e) {
+             JOptionPane.showMessageDialog(this, "Lỗi khi lấy dữ liệu thống kê: " + e.getMessage(), "Lỗi CSDL", JOptionPane.ERROR_MESSAGE);
+             e.printStackTrace();
+        } catch (Exception e) {
+             JOptionPane.showMessageDialog(this, "Lỗi không xác định khi thống kê: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+             e.printStackTrace();
+        }
+    }
  
 
     @Override
@@ -1290,6 +1349,8 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
                 handleXemChiTiet();
             } else if (o.equals(btnXuatHD)) {
                 handleXuatHoaDon();
+            } else if (o.equals(btnThongKe)) {
+                handleThongKe();
           }
         }
         else if (tabbedPane.getSelectedComponent() == panelTaoHoaDon) {
