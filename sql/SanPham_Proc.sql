@@ -1,5 +1,6 @@
 use QuanLyCHTL
 --insert
+Go
 CREATE PROCEDURE InsertSanPham
     @maSP VARCHAR(50),
     @tenSP VARCHAR(255),    

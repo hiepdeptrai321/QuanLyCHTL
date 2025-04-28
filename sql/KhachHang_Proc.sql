@@ -1,5 +1,6 @@
 ﻿use QuanLyCHTL
 --insert
+Go
 CREATE PROCEDURE sp_InsertKhachHang
     @p_ma NVARCHAR(50),
     @p_ngayDangKy DATE,
