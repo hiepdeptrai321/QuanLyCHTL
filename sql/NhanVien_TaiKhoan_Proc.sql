@@ -1,3 +1,5 @@
+use QuanLyCHTL
+go
 CREATE PROCEDURE sp_InsertNhanVien
     @ma NVARCHAR(10),
     @ngayVaoLam DATE,
@@ -83,7 +85,7 @@ BEGIN
     INSERT INTO TaiKhoan (maTK, tenDN, matKhau, vaiTro)
     VALUES (@maTK, @tenDN, @matKhau, @vaiTro)
 END
-
+go
 CREATE PROCEDURE sp_UpdateTaiKhoan
     @maTK NVARCHAR(50),
     @tenDN NVARCHAR(50),

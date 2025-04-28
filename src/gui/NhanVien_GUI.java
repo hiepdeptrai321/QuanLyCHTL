@@ -123,9 +123,12 @@ public class NhanVien_GUI extends JPanel implements ActionListener,MouseListener
 				try {
 					Locale localeVN = new Locale("vi", "VN");
 			        NumberFormat fmt = NumberFormat.getCurrencyInstance(localeVN);
-			        String luongfommat = fmt.format(x.getLuong());
+			        String luongFommat = fmt.format(x.getLuong());
+			        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+		            String namSinhFormatted = sdf.format(x.getNamSinh());
+		            String ngayVaoLamFormatted = sdf.format(x.getNgayVaoLam());
 					if(nhanVien_DAO.insert(x)) {
-						String[] s = {x.getMa(),x.getHoTen(),x.getSdt(),x.getEmail(),String.valueOf(x.getNamSinh()),String.valueOf(x.getDiaChi()),String.valueOf(x.getNgayVaoLam()),luongfommat,String.valueOf(x.getCaLam()),x.getMaNQL()};
+						String[] s = {x.getMa(),x.getHoTen(),x.getSdt(),x.getEmail(),namSinhFormatted,String.valueOf(x.getDiaChi()),ngayVaoLamFormatted,luongFommat,String.valueOf(x.getCaLam()),x.getMaNQL()};
 			    		model.addRow(s);
 					}
 				} catch (SQLException e2) {
@@ -135,22 +138,28 @@ public class NhanVien_GUI extends JPanel implements ActionListener,MouseListener
 			}
 		}else if (o.equals(btnSua)) {
 	        int row = table.getSelectedRow();
+	        if(txtMaNV.getText().equalsIgnoreCase(model.getColumnName(row))) {
+	        	JOptionPane.showMessageDialog(this,"Không được sửa mã nhân viên");
+	        	return;
+	        }
 	        if (row != -1) {
 	            if (ValidData()) {
 	                try {
+	                	SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 	                    NhanVien nv = taoNhanVien();
 	                    if (nhanVien_DAO.update(nv)) {
 	                        Locale localeVN = new Locale("vi", "VN");
 	                        NumberFormat fmt = NumberFormat.getCurrencyInstance(localeVN);
 	                        String luongFormat = fmt.format(nv.getLuong());
-
-	                        model.setValueAt(nv.getMa(), row, 0);
+	                        String namSinhFormatted = sdf.format(nv.getNamSinh());
+	                        String ngayVaoLamFormatted = sdf.format(nv.getNgayVaoLam());
+	                        
 	                        model.setValueAt(nv.getHoTen(), row, 1);
 	                        model.setValueAt(nv.getSdt(), row, 2);
 	                        model.setValueAt(nv.getEmail(), row, 3);
-	                        model.setValueAt(nv.getNamSinh(), row, 4);
+	                        model.setValueAt(namSinhFormatted, row, 4);
 	                        model.setValueAt(nv.getDiaChi(), row, 5);
-	                        model.setValueAt(nv.getNgayVaoLam(), row, 6);
+	                        model.setValueAt(ngayVaoLamFormatted, row, 6);
 	                        model.setValueAt(luongFormat, row, 7);
 	                        model.setValueAt(nv.getCaLam(), row, 8);
 	                        model.setValueAt(nv.getMaNQL(), row, 9);
@@ -192,7 +201,7 @@ public class NhanVien_GUI extends JPanel implements ActionListener,MouseListener
 	                List<NhanVien> dsNV = nhanVien_DAO.findNhanVien(keyword);
 	                model.setRowCount(0);
 	                
-	                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 	                Locale localeVN = new Locale("vi", "VN");
 	                NumberFormat fmt = NumberFormat.getCurrencyInstance(localeVN);
 	                
@@ -230,7 +239,7 @@ public class NhanVien_GUI extends JPanel implements ActionListener,MouseListener
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
 		int row = table.getSelectedRow();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
         if (row != -1) {
             txtMaNV.setText(model.getValueAt(row, 0).toString());
             txtHoTen.setText(model.getValueAt(row, 1).toString());
@@ -291,7 +300,7 @@ public class NhanVien_GUI extends JPanel implements ActionListener,MouseListener
     	Locale localeVN = new Locale("vi", "VN");
         NumberFormat fmt = NumberFormat.getCurrencyInstance(localeVN);
     	for(NhanVien x:dsNV) {
-    		if(!x.getMa().matches("^QL.*")) {
+    		if(!x.getMa().matches("^NQL.*")) {
     			String luongfommat = fmt.format(x.getLuong());
         		String[] s = {x.getMa(),x.getHoTen(),x.getSdt(),x.getEmail(),String.valueOf(x.getNamSinh()),String.valueOf(x.getDiaChi()),String.valueOf(x.getNgayVaoLam()),luongfommat,String.valueOf(x.getCaLam()),x.getMaNQL()};
         		model.addRow(s);
