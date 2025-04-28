@@ -8,6 +8,7 @@ public class KhachHang extends Nguoi{
     private int hangThanhVien;
     private int soLanMuaHang;
     private String maNV;
+
 	public KhachHang(String ma, String hoTen, String sdt, String email, Date namSinh, String diaChi, Date ngayDangKy,
 			int diemTichLuy, int hangThanhVien, int soLanMuaHang, String maNV) {
 		super(ma, hoTen, sdt, email, namSinh, diaChi);
@@ -15,6 +16,7 @@ public class KhachHang extends Nguoi{
 		this.diemTichLuy = diemTichLuy;
 		this.hangThanhVien = hangThanhVien;
 		this.soLanMuaHang = soLanMuaHang;
+
 		this.maNV = maNV;
 	}
 	

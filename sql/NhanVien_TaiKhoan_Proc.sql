@@ -72,6 +72,7 @@ BEGIN
 END
 
 --TaiKhoan
+Go
 CREATE PROCEDURE sp_InsertTaiKhoan
     @maTK NVARCHAR(50),
     @tenDN NVARCHAR(50),

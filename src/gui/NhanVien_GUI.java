@@ -1,7 +1,6 @@
 package gui;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.table.DefaultTableModel;
 import com.toedter.calendar.JDateChooser;
 
@@ -103,6 +102,7 @@ public class NhanVien_GUI extends JPanel implements ActionListener,MouseListener
         btnLamMoi.addActionListener(this);
         btnTim.addActionListener(this);
         table.addMouseListener(this);
+        txtTim.addActionListener(this);
 
         pnlR.add(buttonPanel);
 
@@ -185,7 +185,7 @@ public class NhanVien_GUI extends JPanel implements ActionListener,MouseListener
 	        } else {
 	            JOptionPane.showMessageDialog(this, "Vui lòng chọn nhân viên cần xóa!");
 	        }
-	    }else if (o.equals(btnTim)) {
+	    }else if (o.equals(btnTim) || o.equals(txtTim)) {
 	        String keyword = txtTim.getText().trim();
 	        if (!keyword.isEmpty()) {
 	            try {
@@ -374,6 +374,5 @@ public class NhanVien_GUI extends JPanel implements ActionListener,MouseListener
         
         table.clearSelection();
     }
-
-	
 }
+

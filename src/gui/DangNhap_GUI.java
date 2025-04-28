@@ -60,7 +60,7 @@ public class DangNhap_GUI extends JFrame implements ActionListener {
         JPanel pnl2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
         pnl2.add(lblPassLabel);
         pnl2.add(txtPass);
-        txtPass.addActionListener(this);
+        txtPass.addActionListener(this); 
 
         // Nút đăng nhập
         JButton btnLogin = new JButton("Đăng nhập");
@@ -142,13 +142,14 @@ public class DangNhap_GUI extends JFrame implements ActionListener {
             }
         	else {
             	try {
+            		MaQLTemp = tkTemp.getMaTK();
             		nhanVienHienHanh = nv.getByTK(tkTemp.getMaTK());
             	} catch (SQLException e1) {
 	            	// TODO Auto-generated catch block
 	            	e1.printStackTrace();
             	}
         	}
-            new TrangChu_GUI();
+            new TrangChu_GUI(); 
             
             this.setVisible(false);
         }

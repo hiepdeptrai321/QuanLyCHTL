@@ -10,6 +10,7 @@ import entity.NhanVien;
 public class NhanVien_DAO {
     private Connection conn;
 
+
 	public NhanVien_DAO(Connection conn) {
 		this.conn = conn;
 	}
