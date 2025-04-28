@@ -2,7 +2,7 @@
 go
 use QuanLyCHTL
 go
---drop database
+----drop database
 --use master
 --ALTER DATABASE QuanLyCHTL
 --SET SINGLE_USER
