@@ -121,6 +121,7 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
     private KhachHang_DAO khachHangDAO;
     private KhachHang khachHangHienTai;
 	private List<ChiTietHoaDon> dsChiTietHoaDonTam = new ArrayList<ChiTietHoaDon>();
+	private JButton btnXuatHD;
 
     public HoaDon_GUI() {
         ConnectDB.getInstance().connect();
@@ -259,13 +260,17 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
 
         btnChiTiet = new JButton("Xem chi tiết");
         btnChiTiet.setPreferredSize(new Dimension(200, 35));
+        btnXuatHD = new JButton("Xuất hóa đơn");
+        btnChiTiet.setPreferredSize(new Dimension(200, 35));
         panelSouth.add(btnChiTiet);
+        panelSouth.add(btnXuatHD);
 
         // --- Thêm sự kiện cho các nút trong tab này ---
         btnTimKiem.addActionListener(this);
         btnChiTiet.addActionListener(this);
         btnApDung.addActionListener(this);
         btnHuyLoc.addActionListener(this);
+        btnXuatHD.addActionListener(this);
 
         // Listener cho việc chọn dòng trên bảng 
          tableHoaDon.getSelectionModel().addListSelectionListener(e -> {
@@ -1204,7 +1209,7 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
              JOptionPane.showMessageDialog(this, "Vui lòng chọn một hóa đơn để xem chi tiết.");
          }
     }
-
+ 
 
     @Override
     public void actionPerformed(ActionEvent e) {
