@@ -14,8 +14,8 @@ public class ConnectDB {
 
 	public void connect() {
 		String url ="jdbc:sqlserver://localhost:1433;databasename=QuanLyCHTL";
-		String user ="AnDam";
-		String pass ="SaPassword.";
+		String user ="sa";
+		String pass ="sapassword";
 		try {
 			con = DriverManager.getConnection(url, user, pass);
 		} catch (SQLException e) {

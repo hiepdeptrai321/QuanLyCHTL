@@ -43,6 +43,7 @@ import javax.swing.JTabbedPane; // Import JTabbedPane
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.RowSorter;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -62,6 +63,7 @@ import javax.swing.table.TableRowSorter;
 import connectDB.ConnectDB;
 import dao.HoaDon_DAO;
 import dao.KhachHang_DAO;
+import dao.NhanVien_DAO;
 import dao.SanPham_DAO;
 import entity.ChiTietHoaDon;
 import entity.HoaDon;
@@ -607,16 +609,16 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
         columnModel.getColumn(0).setCellRenderer(centerRenderer);
         columnModel.getColumn(1).setPreferredWidth(80); 
         columnModel.getColumn(1).setCellRenderer(centerRenderer);
-        columnModel.getColumn(2).setPreferredWidth(220); 
+        columnModel.getColumn(2).setPreferredWidth(200); 
         columnModel.getColumn(3).setPreferredWidth(70);  
         columnModel.getColumn(3).setCellRenderer(rightRenderer); 
-        columnModel.getColumn(4).setPreferredWidth(100); 
+        columnModel.getColumn(4).setPreferredWidth(90); 
         columnModel.getColumn(4).setCellRenderer(currencyRenderer);
-        columnModel.getColumn(5).setPreferredWidth(120); 
+        columnModel.getColumn(5).setPreferredWidth(90); 
         columnModel.getColumn(5).setCellRenderer(currencyRenderer);
         columnModel.getColumn(6).setPreferredWidth(120); 
         columnModel.getColumn(6).setCellRenderer(currencyRenderer);
-        columnModel.getColumn(7).setPreferredWidth(20);
+        columnModel.getColumn(7).setPreferredWidth(35);
     }
 
      // --- Hàm thêm listeners cho các component trong Tab Tạo Hóa Đơn ---
@@ -857,8 +859,17 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
              HoaDon hoaDonMoi = new HoaDon();
              String maHDMoi = "HD" + (System.currentTimeMillis()%10000); 
              hoaDonMoi.setMaHD(maHDMoi);
-             hoaDonMoi.setNgayLap(new Date()); 
-             hoaDonMoi.setNv(DangNhap_GUI.nhanVienHienHanh); 
+             hoaDonMoi.setNgayLap(new Date());
+             
+             NhanVien_DAO nvdao = new NhanVien_DAO(ConnectDB.getConnection());
+             NhanVien nvhh = new NhanVien();
+             try {
+				nvhh = nvdao.getById(DangNhap_GUI.MaQLTemp);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+             hoaDonMoi.setNv(nvhh);
              hoaDonMoi.setKh(khachHangHienTai); 
              hoaDonMoi.setQuay(1);
              try {
@@ -942,8 +953,6 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
     }
 
 
-    // --- Lớp nội danh (inner class) cho Renderer và Editor của nút Xóa ---
-
     // Class để vẽ button trên JTable
     static class ButtonRenderer extends JButton implements TableCellRenderer {
         public ButtonRenderer() {
@@ -1024,6 +1033,7 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
                       modelChiTietTaoHD.removeRow(editingRow);
                       updateSTTTable();
              }
+             updateSummaryPOS();
         }
     }
 
@@ -1097,8 +1107,7 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
               currentHoaDonList = new ArrayList<>();
              return;
          }
-          currentHoaDonList = new ArrayList<>(list);
-
+         currentHoaDonList = new ArrayList<>(list);
          for (HoaDon hd : currentHoaDonList) {
              String tenKH = (hd.getKh() != null) ? hd.getKh().getMa() : "Khách lẻ";
               String tenNV = (hd.getNv() != null) ? hd.getNv().getHoTen() : "N/A";
@@ -1163,6 +1172,10 @@ public class HoaDon_GUI extends JPanel implements ActionListener {
          txtTimKiem.setText("");
          cmbFilterCriteria.setSelectedIndex(0);
          radTangDan.setSelected(true);
+         RowSorter<?> sorter = tableHoaDon.getRowSorter();
+         if (sorter instanceof TableRowSorter) {
+             ((TableRowSorter<?>) sorter).setSortKeys(null);
+         }
          try {
              loadDataToTable(hoaDonDAO.getAll());
          } catch (SQLException e) {
