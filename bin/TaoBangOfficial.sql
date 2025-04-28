@@ -102,7 +102,7 @@ CREATE TABLE NhanVien (
 
 CREATE TABLE KhachHang (
     ma NVARCHAR(50) PRIMARY KEY,
-    ngayDangKy DATE,
+    ngayDangKy DATETIME,
     diemTichLuy INTEGER,
     hangThanhVien INTEGER,
     soLanMuaHang INTEGER,
@@ -117,7 +117,7 @@ CREATE TABLE KhachHang (
 
 CREATE TABLE HoaDon (
     maHD NVARCHAR(50) PRIMARY KEY,
-    ngayLap DATE,
+    ngayLap DATETIME,
     quay INTEGER,
     tongTien FLOAT,
     thanhTien FLOAT,

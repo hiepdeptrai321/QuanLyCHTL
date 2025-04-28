@@ -162,4 +162,29 @@ BEGIN
     END CATCH;
 END;
 GO
+--================================================================================
+create trigger trg_updateKMvaoCTHD
+on [dbo].[ChiTietHoaDon]
+after insert
+as
+	begin
+		update [dbo].[ChiTietHoaDon]
+		set [maKM] = km.maKM
+		from [dbo].[KhuyenMai] km join [dbo].[SanPham] sp on km.maSP = sp.maSP
+			join [dbo].[ChiTietHoaDon] cthd on cthd.maSP = sp.maSP
+	end
+go
+
+
+create function func_getGiaTriGiam(@maSP nvarchar(50))
+returns float
+as
+	begin
+		declare @gtGiam float = 0;
+		select top 1  @gtGiam = giaTriGiam
+		from [dbo].[KhuyenMai] 
+		where [maSP] = @maSP and getdate() >= ngayBatDau and getdate() <= ngayKetThuc
+		order by giaTriGiam desc
+		return @gtGiam
+	end
 
