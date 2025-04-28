@@ -212,4 +212,59 @@ public class HoaDon_DAO {
         }
         return success;
     }
+    
+    //Hàm lấy thống kê theo ngày
+    public List<Object[]> getThongKeTheoNgay() throws SQLException {
+        List<Object[]> results = new ArrayList<>();
+        String sql = "{call sp_ThongKeDoanhThuTheoNgay}"; // Gọi SP tương ứng
+        try (CallableStatement cs = conn.prepareCall(sql);
+             ResultSet rs = cs.executeQuery()) {
+            while (rs.next()) {
+                results.add(new Object[]{
+                    // Lấy ngày dưới dạng String hoặc Date tùy procedure trả về
+                    rs.getString("ThoiGian"), // hoặc rs.getDate("ThoiGian")
+                    rs.getInt("SoLuongHoaDon"),
+                    rs.getDouble("TongDoanhThu"),
+                    rs.getInt("TongSoLuongSPBanRa")
+                });
+            }
+        }
+        return results;
+    }
+
+    // Hàm lấy thống kê theo Tháng
+    public List<Object[]> getThongKeTheoThang() throws SQLException {
+        List<Object[]> results = new ArrayList<>();
+        String sql = "{call sp_ThongKeDoanhThuTheoThang}"; // Gọi SP tương ứng
+        try (CallableStatement cs = conn.prepareCall(sql);
+             ResultSet rs = cs.executeQuery()) {
+            while (rs.next()) {
+                 results.add(new Object[]{
+                    rs.getString("ThoiGian"), // Thường là String dạng "yyyy-MM"
+                    rs.getInt("SoLuongHoaDon"),
+                    rs.getDouble("TongDoanhThu"),
+                    rs.getInt("TongSoLuongSPBanRa")
+                });
+            }
+        }
+        return results;
+    }
+
+     // Hàm lấy thống kê theo Năm
+     public List<Object[]> getThongKeTheoNam() throws SQLException {
+        List<Object[]> results = new ArrayList<>();
+        String sql = "{call sp_ThongKeDoanhThuTheoNam}"; // Gọi SP tương ứng
+        try (CallableStatement cs = conn.prepareCall(sql);
+             ResultSet rs = cs.executeQuery()) {
+            while (rs.next()) {
+                 results.add(new Object[]{
+                    rs.getInt("ThoiGian"), // Năm là kiểu số nguyên
+                    rs.getInt("SoLuongHoaDon"),
+                    rs.getDouble("TongDoanhThu"),
+                    rs.getInt("TongSoLuongSPBanRa")
+                });
+            }
+        }
+        return results;
+    }
 }

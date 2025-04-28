@@ -11,7 +11,7 @@ go
 --drop database QuanLyCHTL
 
 -- -----------------------------
--- T?O B?NG H? TH?NG C?A H�NG TI?N L?I
+-- Tạo bảng
 -- -----------------------------
 -- =============================
 -- CREATE TABLE STATEMENTS (Giữ nguyên như bạn cung cấp)
