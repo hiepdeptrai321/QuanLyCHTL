@@ -1,4 +1,4 @@
---Store procedure 
+﻿--Store procedure 
 
 --HoaDon
 USE QuanLyCHTL;
@@ -188,3 +188,57 @@ as
 		return @gtGiam
 	end
 
+Go
+-- *** 1. Thống kê theo Ngày ***
+IF OBJECT_ID('sp_ThongKeDoanhThuTheoNgay', 'P') IS NOT NULL DROP PROCEDURE sp_ThongKeDoanhThuTheoNgay;
+GO
+CREATE PROCEDURE sp_ThongKeDoanhThuTheoNgay
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT
+        CONVERT(date, ngayLap) AS ThoiGian, -- Chỉ lấy phần ngày, kiểu DATE
+        COUNT(maHD) AS SoLuongHoaDon,
+        SUM(thanhTien) AS TongDoanhThu,
+        SUM(tongSoLuongSP) AS TongSoLuongSPBanRa
+    FROM HoaDon -- Thay HoaDon bằng tên bảng hóa đơn của bạn nếu khác
+    GROUP BY CONVERT(date, ngayLap)
+    ORDER BY ThoiGian DESC;
+END
+GO
+
+-- *** 2. Thống kê theo Tháng ***
+IF OBJECT_ID('sp_ThongKeDoanhThuTheoThang', 'P') IS NOT NULL DROP PROCEDURE sp_ThongKeDoanhThuTheoThang;
+GO
+CREATE PROCEDURE sp_ThongKeDoanhThuTheoThang
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT
+        FORMAT(ngayLap, 'yyyy-MM') AS ThoiGian, -- Định dạng Năm-Tháng, kiểu chuỗi
+        COUNT(maHD) AS SoLuongHoaDon,
+        SUM(thanhTien) AS TongDoanhThu,
+        SUM(tongSoLuongSP) AS TongSoLuongSPBanRa
+    FROM HoaDon -- Thay HoaDon bằng tên bảng hóa đơn của bạn nếu khác
+    GROUP BY FORMAT(ngayLap, 'yyyy-MM')
+    ORDER BY ThoiGian DESC;
+END
+GO
+
+-- *** 3. Thống kê theo Năm ***
+IF OBJECT_ID('sp_ThongKeDoanhThuTheoNam', 'P') IS NOT NULL DROP PROCEDURE sp_ThongKeDoanhThuTheoNam;
+GO
+CREATE PROCEDURE sp_ThongKeDoanhThuTheoNam
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT
+        YEAR(ngayLap) AS ThoiGian, -- Chỉ lấy Năm, kiểu INT
+        COUNT(maHD) AS SoLuongHoaDon,
+        SUM(thanhTien) AS TongDoanhThu,
+        SUM(tongSoLuongSP) AS TongSoLuongSPBanRa
+    FROM HoaDon -- Thay HoaDon bằng tên bảng hóa đơn của bạn nếu khác
+    GROUP BY YEAR(ngayLap)
+    ORDER BY ThoiGian DESC;
+END
+GO

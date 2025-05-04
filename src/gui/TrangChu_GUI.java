@@ -306,10 +306,9 @@ public class TrangChu_GUI extends JFrame implements MouseListener,ActionListener
 			dangNhap.setVisible(true);
 			this.dispose();
 			pnlC.revalidate();
-	        pnlC.repaint(); 
+	        pnlC.repaint();
+	        DangNhap_GUI.nhanVienHienHanh=null;
+	        DangNhap_GUI.quanLyCheck=false;
 		}
-	}
-	public static void main(String[] args) {
-		new TrangChu_GUI();
 	}
 }
